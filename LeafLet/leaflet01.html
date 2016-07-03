@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <style>
+      html, body {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      
+      #map {
+        width: 98%;
+        height: 95%;
+        margin-left:auto;
+        margin-right:auto;      
+      }
+    </style>
+    <title>Leaflet example</title>
+  </head>
+  <body>
+    &nbsp;
+    <div id="map"></div>zz
+    <script type="text/javascript">
+        var osmLayer = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+        var mapquestLayer = new L.TileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.jpg', {subdomains: '1234'});
+        var stamenWatercolorLayer = new L.TileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png');
+        var stamenTonerLiteLayer = new L.TileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png');
+        var ESRIWorldStreetMapLayer = new L.TileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}');
+        var ESRIDeLormeLayer = new L.TileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/DeLorme_World_Base_Map/MapServer/tile/{z}/{y}/{x}');
+        var ESRIWorldTopoMapLayer = new L.TileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}');
+        var ESRIWorldImageryLayer = new L.TileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
+        var ESRIWorldShadedReliefLayer = new L.TileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}');
+        var OpenCycleMapLayer = new L.TileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', {subdomains: 'abc'});
+        
+        var baseMaps = {
+            'OpenStreetMap': osmLayer,
+            'MapQuest Open': mapquestLayer,
+            'Stamen Watercolor': stamenWatercolorLayer,
+            'Stamen Toner Lite': stamenTonerLiteLayer,
+            'Open Cycle Map': OpenCycleMapLayer,
+            'ESRI World Street Map': ESRIWorldStreetMapLayer,
+            'ESRI DeLorme': ESRIDeLormeLayer,
+            'ESRI World Topo Map': ESRIWorldTopoMapLayer,
+            'ESRI World Imagery': ESRIWorldImageryLayer,
+            'ESRI World Shaded Relief': ESRIWorldShadedReliefLayer          
+        };
+        
+        var municipios = new L.tileLayer.wms('http://localhost:9090/geoserver/wms', {
+            layers: 'PSIG:municipio',
+            format: 'image/png',
+            transparent: true
+        });
+
+
+        var tramosDeCarretera = new L.tileLayer.wms('http://localhost:9090/geoserver/wms', {
+            layers: 'PSIG:tramo',
+            format: 'image/png',
+            transparent: true
+        });
+
+           var bomberos = new L.tileLayer.wms('http://localhost:9090/geoserver/wms', {
+            layers: 'PSIG:bomberos',
+            format: 'image/png',
+            transparent: true
+        });
+
+            var hospital = new L.tileLayer.wms('http://localhost:9090/geoserver/wms', {
+            layers: 'PSIG:hospital',
+            format: 'image/png',
+            transparent: true
+        });
+
+
+        var policia = new L.tileLayer.wms('http://localhost:9090/geoserver/wms', {
+            layers: 'PSIG:policia',
+            format: 'image/png',
+            transparent: true
+        });
+
+        var fuentes = new L.tileLayer.wms('http://localhost:9090/geoserver/wms', {
+            layers: 'PSIG:fuentes',
+            format: 'image/png',
+            transparent: true
+        });
+
+        var cine = new L.tileLayer.wms('http://localhost:9090/geoserver/wms', {
+            layers: 'PSIG:cine',
+            format: 'image/png',
+            transparent: true
+        });
+
+           var raster = new L.tileLayer.wms('http://localhost:9090/geoserver/wms', {
+            layers: 'PSIG:PSIGRASTER',
+            format: 'image/png',
+            transparent: true
+        });
+
+
+        
+        var overlayMaps = {
+            'raster' : raster,
+            'municipios': municipios,
+            'tramos de carretera': tramosDeCarretera,
+            'hospitales': hospital,
+            'policia': policia,
+            'cine': cine,
+            'fuentes': fuentes,
+            'bomberos' : bomberos
+        }
+        
+        var layerControl = new L.control.layers(baseMaps, overlayMaps);
+        var scaleControl = new L.control.scale({'imperial': false});
+        
+        var map = L.map('map');
+        map.setView(new L.LatLng(43.50, -8.25), 10);
+        map.addControl(layerControl);
+        map.addControl(scaleControl);
+        map.addLayer(osmLayer);
+    </script>
+  </body>
+</html>

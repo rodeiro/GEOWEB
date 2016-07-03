@@ -1,0 +1,138 @@
+﻿<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset=utf-8 />
+        <title>Gasolineras en un radio de búsqueda - ruta fija</title>
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
+		<script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js?2"></script>
+        <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.2/turf.min.js'></script>
+        <script src='geojsons/gasolinerasRuta.js'></script>
+        <script src='geojsons/ruta_bcn_zgz.js'></script>
+        <style>
+          html, body {
+			height: 100%;
+			width: 100%;
+			margin: 0;
+			padding: 0;
+		  }
+		  #map {
+			width: 100%;
+			height: 100%;
+		  }
+          .fill-grey {background: #EEE;}
+          .pin-top {top: 0; right: 0; left: 0; position: absolute;} 
+          .padding {padding: 10px 10px 10px 50px;}
+		  .margin {margin: 0px 5px 0px 5px;}
+		  .font {font-family: garamond; font-size: 12pt; font-weight: bold;}
+        </style>
+    </head>
+    <body>
+		<div id='map'></div>
+		<div class="pin-top fill-grey padding font">
+            Gasolineras en un radio de 
+            <input type="number" id="radius" max="10000" min="0" class="margin" value="" step="100"> metros
+            en la ruta Barcelona - Zaragoza
+            <p id="numGasolineras">Número de estaciones encontradas: <p>
+        </div>
+
+        <script>
+            
+			// 1. Creación del mapa 
+			
+			var map = L.map('map');
+      
+            // 2. Creación de capa base
+			
+            var osmlayer = L.tileLayer('http://services.arcgisonline.com/arcgis/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}', {
+              maxZoom: 18,
+              attribution: 'Esri, HERE, DeLorme, MapmyIndia, &copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors. Data: <a href="http://geoportalgasolineras.es/">geoportalgasolineras.es</a> '
+            }).addTo(map);
+			
+            // 3. Creación de capas geoJSON de gasolineras y ruta
+			
+            var gasolinerasStyle ={radius: 5, fillColor: "blue", color: "#000",weight: 1, opacity: 1, fillOpacity: 0.7};
+            var gasolinerasLayer = L.geoJson(gasolineras, {
+                                        pointToLayer: function (feature, latlng) {
+                                            return L.circleMarker(latlng);
+                                            },
+                                        style: gasolinerasStyle
+                                    }).addTo(map);
+
+			var rutaStyle =  {color: "hotpink", weight: 3};
+            var rutaLayer =  L.geoJson(ruta, {style: rutaStyle}).addTo(map);
+            
+			
+			map.fitBounds(rutaLayer.getBounds());
+
+			// 4. Creación del buffer alrededor de la ruta y cálculo de gasolineras incluidas en él
+		    
+			var bufferLayer = L.geoJson();
+			var gasolinerasInsideLayer = L.geoJson();
+			
+			function clean() {
+				map.removeLayer(bufferLayer);
+				map.removeLayer(gasolinerasInsideLayer);
+			}
+			
+            function run() {
+					
+                var radius = document.getElementById('radius').value;
+                if (isNaN(radius)) radius = 500;
+                
+				// - buffer (geoJSON) y bufferLayer (capa correspondiente al buffer)
+                var buffer =  turf.buffer(ruta, radius/1000, "kilometers");
+
+				function onEachFeature(feature, layer) {
+                   layer.bindPopup('Ruta Barcelona-Zaragoza');
+                }
+
+				var bufferStyle = {stroke: false, fillColor: "hotpink", fillOpacity: 0.2};
+                bufferLayer = L.geoJson(buffer, {
+                                onEachFeature: onEachFeature,
+                                style: bufferStyle
+                                }).addTo(map);
+				
+				// - gasolinerasInside (geoJSON) y gasolinerasInsideLayer (capa correspondiente a las 
+				//   gasolineras dentro del radio de búsqueda)
+                var gasolinerasInsideStyle = {
+                        radius: 8,
+                        fillColor: "red",
+                        color: "#000",
+                        weight: 1,
+                        opacity: 1,
+                        fillOpacity: 0.8
+                };
+
+				function isEmpty(val) {
+					if (val) {
+						return val;
+					} else {
+						return "";
+					}
+				}
+				
+                var gasolinerasInside =  turf.within(gasolineras, buffer);
+                var numGasolinerasInside = 0;
+				
+                gasolinerasInsideLayer = L.geoJson(gasolinerasInside, {
+                    onEachFeature: function(feature, layer) {
+                        numGasolinerasInside++;
+                        layer.bindPopup("<h4>"+isEmpty(feature.properties.Rotulo)+"</h4><br><b>Localidad:</b> " + feature.properties.Localidad+
+							"<br><b>Gasolina95: </b>" + isEmpty(feature.properties.Gasolina95) +
+							"<br><b>Gasolina98: </b>" + isEmpty(feature.properties.Gasolina98) +
+							"<br><b>Gasoleo A: </b>" + isEmpty(feature.properties.Gasoleo_A) +
+							"<br><b>Nuevo Gasoleo A: </b>" + isEmpty(feature.properties.NuevoGasoleo_A) +
+							"<br><b>Horario: </b>" + feature.properties.Horario
+                    );},
+                    pointToLayer: function (feature, latlng) {
+                        return L.circleMarker(latlng);
+                    },
+                    style: {radius: 5, fillColor: "yellow", color: "#fff",weight: 1, opacity: 1, fillOpacity: 0.7}
+                }).addTo(map);
+                document.getElementById('numGasolineras').innerHTML = "Número de estaciones encontradas: " + numGasolinerasInside;
+            }
+			
+            document.getElementById('radius').onchange = function() {clean(), run()};
+        </script>
+    </body>
+</html>

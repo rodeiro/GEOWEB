@@ -1,0 +1,148 @@
+﻿<!DOCTYPE html>
+<html>  <!-- MARCADOR DRAGGABLE TOGEOJSON y eso lo metes a TURF.BUFFER -->
+    <head>
+        <meta charset=utf-8 />
+        <title>Elementos en un radio de búsqueda - punto móvil</title>
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
+		<script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js?2"></script>
+        <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.2/turf.min.js'></script>
+        <script src='geojsons/practica3.js'></script>
+        <style>
+          html, body {
+			height: 100%;
+			width: 100%;
+			margin: 0;
+			padding: 0;
+		  }
+		  #map {
+			width: 100%;
+			height: 100%;
+		  }
+          .fill-grey {background: #EEE;}
+          .pin-top {top: 0; right: 0; left: 0; position: absolute;} 
+          .padding {padding: 10px 10px 10px 50px;}
+		  .margin {margin: 0px 5px 0px 5px;}
+		  .font {font-family: garamond; font-size: 12pt; font-weight: bold;}
+        </style>
+    </head>
+    <body>
+		<div id='map'></div>
+		<div class="pin-top fill-grey padding font">
+            Elementos en un radio de 
+            <input type="number" id="radius" max="10000" min="0" class="margin" value="" step="100"> metros
+            <br>
+            <input type="radio" name="selection" value="museo" id= "museo"> museo<br>
+            <input type="radio" name="selection" value="cine" id = "cine"> cine<br>
+            <p id="numElementos">Número de elementos encontrados: <p>
+        </div>
+
+        <script>
+            var radioSelected = function(){
+               museo =  document.getElementById('museo').checked;
+               if(museo){
+                    return 'museo';
+                }
+                else {
+                    return 'cine';
+                }
+            }
+
+           
+
+            var myMarker = L.marker([ 43.35907279287617, -8.419990539550781],{title: "MyMarker", draggable: "true"});
+				
+			var map = L.map('map');
+            map.addLayer(myMarker);
+
+            var movimiento = function(){
+                clean(); 
+
+                myGeoJson = myMarker.toGeoJSON();
+                console.log(myGeoJson.geometry.coordinates);
+            }
+
+            myMarker.on('dragend', movimiento);
+            var osmlayer = L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
+              maxZoom: 18,
+              attribution: 'STAMEN, HERE, DeLorme, MapmyIndia, &copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors. Data: RIE, GeoInformática '
+            }).addTo(map);
+			
+			
+            var elementosStyle ={radius: 5, fillColor: "red", color: "black",weight: 1, opacity: 1, fillOpacity: 0.7};
+            var elementosLayer = L.geoJson(featuresOfInterest, {
+                                        pointToLayer: function (feature, latlng) {
+                                            return L.circleMarker(latlng)                                                
+                                            .on('click', function (e) {
+                                                clean();
+                                                document.getElementById(feature.properties.tipo).checked = true; 
+                                                run();
+                                                });
+                                            },
+                                        style: elementosStyle
+                                    }).addTo(map);
+
+			
+			map.fitBounds(elementosLayer.getBounds());
+
+		    
+			var bufferLayer = L.geoJson();
+			var elementosInsideLayer = L.geoJson();
+			
+			function clean() {
+				map.removeLayer(bufferLayer);
+				map.removeLayer(elementosInsideLayer);
+			}
+			
+            function run() {
+				var userSelection = radioSelected();
+                console.log("User selection is "+userSelection);
+
+                var radius = document.getElementById('radius').value;
+                if (isNaN(radius)) radius = 500;
+          
+                var buffer =  turf.buffer(myGeoJson, radius/1000, "kilometers");
+
+				function onEachFeature(feature, layer) {
+                   layer.bindPopup('Selección de usuario');
+                }
+
+				var bufferStyle = {stroke: false, fillColor: "blue", fillOpacity: 0.2};
+                bufferLayer = L.geoJson(buffer, {
+                                onEachFeature: onEachFeature,
+                                style: bufferStyle
+                                }).addTo(map);
+
+
+				function isEmpty(val) {
+					if (val) {
+						return val;
+					} else {
+						return "";
+					}
+				}
+				
+                var elementosInside =  turf.within(featuresOfInterest, buffer);
+                var numElementosInside = 0;
+				
+                elementosInsideLayer = L.geoJson(elementosInside, {
+                    onEachFeature: function(feature, layer) {
+                        numElementosInside++;
+                        layer.bindPopup("<h4>"+isEmpty(feature.properties.nombre)+"</h4><br>"
+                    );},
+                    filter: function(feature, layer) {
+                        return (feature.properties.tipo == userSelection);
+                    },
+                    pointToLayer: function (feature, latlng) {
+                        return L.circleMarker(latlng);
+                    },
+                    style: {radius: 5, fillColor: "blue", color: "black",weight: 1, opacity: 1, fillOpacity: 0.7}
+                }).addTo(map);
+                document.getElementById('numElementos').innerHTML = "Número de estaciones encontradas: " + numElementosInside;
+            }
+			
+            document.getElementById('radius').onchange = function() {clean(), run()};
+            document.getElementById('museo').onchange = function() {clean(), run()};
+            document.getElementById('cine').onchange = function() {clean(), run()};
+        </script>
+    </body>
+</html>

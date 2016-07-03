@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html>  <!-- MARCADOR DRAGGABLE TOGEOJSON y eso lo metes a TURF.BUFFER -->
+    <head>
+        <meta charset=utf-8 />
+        <title>Elemento más cercano</title>
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
+		<script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js?2"></script>
+        <script src="https://rawgithub.com/jseppi/Leaflet.MakiMarkers/master/Leaflet.MakiMarkers.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+        <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.2/turf.min.js'></script>
+        <script src='geojsons/policia.js'></script>
+        <script src='geojsons/bomberos.js'></script>
+        <script src='geojsons/fuentes.js'></script>
+        <script src='geojsons/nightclubs.js'></script>
+        <style>
+          html, body {
+			height: 100%;
+			width: 100%;
+			margin: 0;
+			padding: 0;
+		  }
+		  #map {
+			width: 100%;
+			height: 100%;
+		  }
+          .fill-grey {background: #EEE;}
+          .pin-top {top: 0; right: 0; left: 0; position: absolute;} 
+          .padding {padding: 10px 10px 10px 50px;}
+		  .margin {margin: 0px 5px 0px 5px;}
+		  .font {font-family: garamond; font-size: 12pt; font-weight: bold;}
+        </style>
+    </head>
+    <body>
+		<div id='map'></div>
+		<div class="pin-top fill-grey padding font">
+
+            Recoger elemetos de tipo:             <br>
+            <select multiple name="selection" id = "selection">
+                <option value="0"></option> 
+               <option value="1">Policía</option> 
+               <option value="2">Bomberos</option> 
+               <option value="3">Pubs</option>
+               <option value="4">Fuentes</option> 
+            </select>
+
+        </div>
+
+        <script>
+            var radioSelected = function(){
+               museos =  document.getElementById('museos').checked;
+               if(museos){
+                    return 'museo';
+                }
+                else {
+                    return 'cine';
+                }
+            }
+          
+          var avoidNull = function(prop){
+            if (prop == undefined){
+              prop = "Elemento";
+            }
+            return prop;
+          }
+           
+
+            var myMarker = L.marker([ 43.38209568876923, -8.326263427734375],{title: "MyMarker", draggable: "true"});
+
+
+                             L.Map = L.Map.extend({
+                                         openPopup: function(popup) {
+                                         //        this.closePopup();  // just comment this
+                                         this._popup = popup;
+
+                                         return this.addLayer(popup).fire('popupopen', {
+                                                                          popup: this._popup
+                                                                          });
+                                         }
+                                         }); 
+				
+			var map = L.map('map');
+            map.addLayer(myMarker);
+
+            var movimiento = function(){
+                clean(); 
+                myGeoJson = myMarker.toGeoJSON();
+                //console.log(myGeoJson.geometry.coordinates);
+                run();
+            }
+
+            myMarker.on('dragend', movimiento);
+            var osmlayer = L.tileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png', {
+              maxZoom: 18,
+              attribution: 'STAMEN, HERE, DeLorme, MapmyIndia, &copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors. Data: RIE, GeoInformática '
+            }).addTo(map);
+			
+			     var makiPolicia = L.MakiMarkers.icon({icon: 'police', color: '#0000ff', size: "s"});
+            var policiaLayer = L.geoJson(geoPolicia, {
+                                        pointToLayer: function (feature, latlng) {
+                                            return L.marker(latlng,{title: avoidNull(feature.properties.NOMBRE),icon: makiPolicia});
+                                            }
+                                    }).addTo(map);
+
+
+            var makiBomberos = L.MakiMarkers.icon({icon: 'fire-station', color: '#ff0000', size: "s"});
+            var bomberosLayer = L.geoJson(geoBomberos, {
+                                        pointToLayer: function (feature, latlng) {
+                                            return L.marker(latlng,{title: avoidNull(feature.properties.NOMBRE),icon: makiBomberos});
+                                            }
+                                    }).addTo(map);
+
+            var makiBar = L.MakiMarkers.icon({icon: 'bar', color: '#009900', size: "s"});
+            var nightLayer = L.geoJson(geoNightClubs, {
+                                        pointToLayer: function (feature, latlng) {
+                                            return L.marker(latlng,{title: avoidNull(feature.properties.NOMBRE),icon: makiBar});
+                                            }
+                                    }).addTo(map);
+
+            var makiFuentes = L.MakiMarkers.icon({icon: 'water', color: '#99ccff', size: "s"});
+            var fuentesLayer = L.geoJson(geoFuentes, {
+                                        pointToLayer: function (feature, latlng) {
+                                            return L.marker(latlng,{title: avoidNull(feature.properties.NOMBRE),icon: makiFuentes});
+                                            }
+                                    }).addTo(map);
+			
+			map.fitBounds(policiaLayer.getBounds());
+
+      var nearPLayer = L.geoJson();
+      var nearFLayer = L.geoJson();
+      var nearNLayer = L.geoJson();
+			var nearBLayer = L.geoJson();
+      var units = "kilometers";
+
+			function clean() {
+        map.removeLayer(nearPLayer);
+				map.removeLayer(nearBLayer);
+        map.removeLayer(nearNLayer);
+        map.removeLayer(nearFLayer);
+			}
+			
+      function run() {
+                seleccionados= $('#selection').val();
+                if((seleccionados == undefined)||(seleccionados.indexOf("0") != -1 && seleccionados.length==1)){
+                  alert("Seleccione conjunto de búsqueda para poder empezar");
+                } else{
+
+                  if (seleccionados.indexOf("1") != -1){
+                      var makiPoliciaGrande = L.MakiMarkers.icon({icon: 'police', color: '#0000ff', size: "l"});
+                      var nearest = turf.nearest(myGeoJson, geoPolicia);
+
+                      var distanciaP = turf.distance(nearest,myGeoJson,units);
+                      nearPLayer = L.geoJson(nearest, {
+                                pointToLayer: function (feature, latlng) {
+                                          
+                                         return L.marker(latlng, {title: avoidNull(feature.properties.NOMBRE),icon: makiPoliciaGrande})
+                                                .bindPopup('<b>'+avoidNull(feature.properties.NOMBRE)+'. Distancia: '+distanciaP+' km</b>', {closeButton:false})
+                                                .on('mouseover', function (e) {
+                                                    this.openPopup();
+                                                })
+                                                .on('mouseout', function (e) {
+                                                  this.closePopup();
+                                                 })
+                                ;}
+                        }).addTo(map);
+                      nearPLayer.openPopup();
+                    }
+
+                if(seleccionados.indexOf("2") != -1){
+                      var makiBomberosGrande = L.MakiMarkers.icon({icon: 'fire-station', color: '#ff0000', size: "l"});
+                      nearest = turf.nearest(myGeoJson, geoBomberos);
+                      var distanciaB = turf.distance(nearest,myGeoJson,units);
+                      //var distanciaB = turf.distance(geoBomberos.features[0],myGeoJson,units);
+                      nearBLayer = L.geoJson(nearest, {
+                                pointToLayer: function (feature, latlng) {
+                                         return L.marker(latlng, {title: avoidNull(feature.properties.NOMBRE),icon: makiBomberosGrande})
+                                                .bindPopup('<b>'+avoidNull(feature.properties.NOMBRE)+'. Distancia: '+distanciaB+' km</b>', {closeButton:false})
+                                                .on('mouseover', function (e) {
+                                                    this.openPopup();
+                                                })
+                                                .on('mouseout', function (e) {
+                                                  this.closePopup();
+                                                 })
+                                ;}
+                        }).addTo(map);
+                      nearBLayer.openPopup();
+                    } 
+
+                if (seleccionados.indexOf("3") != -1){
+                     var makiBarGrande = L.MakiMarkers.icon({icon: 'bar', color: '#009900', size: "l"});
+                      nearest = turf.nearest(myGeoJson, geoNightClubs);
+                      var distanciaN = turf.distance(nearest,myGeoJson,units);
+                      nearNLayer = L.geoJson(nearest, {
+                                pointToLayer: function (feature, latlng) {
+                                         return L.marker(latlng, {title: avoidNull(feature.properties.NOMBRE),icon: makiBarGrande})
+                                                .bindPopup('<b>'+avoidNull(feature.properties.NOMBRE)+'. Distancia: '+distanciaN+' km</b>', {closeButton:false})
+                                                .on('mouseover', function (e) {
+                                                    this.openPopup();
+                                                })
+                                                .on('mouseout', function (e) {
+                                                  this.closePopup();
+                                                 })
+                                ;}
+                        }).addTo(map);
+
+                      nearNLayer.openPopup();
+                    } 
+
+                if (seleccionados.indexOf("4") != -1){
+                      var makiFuentesGrande = L.MakiMarkers.icon({icon: 'water', color: '#99ccff', size: "l"});
+                      nearest = turf.nearest(myGeoJson, geoFuentes);
+                      var distanciaF = turf.distance(nearest,myGeoJson,units);
+                      nearFLayer = L.geoJson(nearest, {
+                                pointToLayer: function (feature, latlng) {
+                                         return L.marker(latlng, {title: avoidNull(feature.properties.NOMBRE),icon: makiFuentesGrande})
+                                                .bindPopup('<b>'+avoidNull(feature.properties.NOMBRE)+'. Distancia: '+distanciaF+' km</b>', {closeButton:false})
+                                                .on('mouseover', function (e) {
+                                                    this.openPopup();
+                                                })
+                                                .on('mouseout', function (e) {
+                                                  this.closePopup();
+                                                 })
+                                ;}
+                        }).addTo(map);
+                      nearFLayer.openPopup();
+                    }
+
+                }
+
+                
+
+      }
+			
+            document.getElementById('selection').onchange = function() {clean(), run()};
+            //document.getElementById('museos').onchange = function() {clean(), run()};
+            //document.getElementById('cines').onchange = function() {clean(), run()};
+        </script>
+    </body>
+</html>

@@ -1,0 +1,161 @@
+﻿<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <style>
+      html, body {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      
+      #map {
+        width: 98%;
+        height: 95%;
+        margin-left:auto;
+        margin-right:auto;      
+      }
+
+          .leaflet-popup-content {
+        width:auto !important;
+      }
+
+    </style>
+    <title>Leaflet práctica 2</title>
+  </head>
+  <body>
+    &nbsp;
+    <div id="map"></div>
+    <script type="text/javascript">
+        var osmLayer = new L.TileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+        var mapquestLayer = new L.TileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/map/{z}/{x}/{y}.jpg', {subdomains: '1234'});
+        var stamenWatercolorLayer = new L.TileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png');
+        var stamenTonerLiteLayer = new L.TileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.png');
+        var ESRIWorldStreetMapLayer = new L.TileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}');
+        var ESRIDeLormeLayer = new L.TileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/DeLorme_World_Base_Map/MapServer/tile/{z}/{y}/{x}');
+        var ESRIWorldTopoMapLayer = new L.TileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}');
+        var ESRIWorldImageryLayer = new L.TileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
+        var ESRIWorldShadedReliefLayer = new L.TileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}');
+        var OpenCycleMapLayer = new L.TileLayer('https://{s}.tile.thunderforest.com/cycle/{z}/{x}/{y}.png', {subdomains: 'abc'});
+        
+        var baseMaps = {
+            'OpenStreetMap': osmLayer,
+            'MapQuest Open': mapquestLayer,
+            'Stamen Watercolor': stamenWatercolorLayer,
+            'Stamen Toner Lite': stamenTonerLiteLayer,
+            'Open Cycle Map': OpenCycleMapLayer,
+            'ESRI World Street Map': ESRIWorldStreetMapLayer,
+            'ESRI DeLorme': ESRIDeLormeLayer,
+            'ESRI World Topo Map': ESRIWorldTopoMapLayer,
+            'ESRI World Imagery': ESRIWorldImageryLayer,
+            'ESRI World Shaded Relief': ESRIWorldShadedReliefLayer          
+        };
+        
+        var municipios = new L.tileLayer.wms('http://localhost:9090/geoserver/wms', {
+            layers: 'PSIG:municipio',
+            format: 'image/png',
+            transparent: true
+        });
+
+
+        var tramosDeCarretera = new L.tileLayer.wms('http://localhost:9090/geoserver/wms', {
+            layers: 'PSIG:tramo',
+            format: 'image/png',
+            transparent: true
+        });
+
+           var bomberos = new L.tileLayer.wms('http://localhost:9090/geoserver/wms', {
+            layers: 'PSIG:bomberos',
+            format: 'image/png',
+            transparent: true
+        });
+
+            var hospital = new L.tileLayer.wms('http://localhost:9090/geoserver/wms', {
+            layers: 'PSIG:hospital',
+            format: 'image/png',
+            transparent: true
+        });
+
+
+        var policia = new L.tileLayer.wms('http://localhost:9090/geoserver/wms', {
+            layers: 'PSIG:policia',
+            format: 'image/png',
+            transparent: true
+        });
+
+        var fuentes = new L.tileLayer.wms('http://localhost:9090/geoserver/wms', {
+            layers: 'PSIG:fuentes',
+            format: 'image/png',
+            transparent: true
+        });
+
+        var raster = new L.tileLayer.wms('http://localhost:9090/geoserver/wms', {
+            layers: 'PSIG:PSIGRASTER',
+            format: 'image/png',
+            transparent: true
+        });
+/***************MARKERS****************************/
+
+         var CineIcon = L.Icon.Default.extend({
+            options: {
+                    iconUrl: 'images/cine.png' ,
+                    iconSize: [20,24],
+                    iconAnchor: [0,0],
+                    popupAnchor: [10, 0]
+            }
+         });
+
+         var cineIcon = new CineIcon();
+
+        var markerMarineda = L.marker([43.3445433,-8.4296907], {icon: cineIcon, title: 'Marineda City',     // Add a title
+            opacity: 0.9});
+        markerMarineda.bindPopup('<p style="font-family: arial; color: #4cc">Cine Marineda</p><img src="images/marineda.jpg" height="350px" width="350px"/>');
+        
+
+        var markerRosales = L.marker([43.3731469,-8.4279727], {icon: cineIcon, title: 'Los Rosales', opacity: 0.9});
+        markerRosales.bindPopup('<b>Cine Los Rosales</b>');
+
+        var markerEspacio = L.marker([43.3368794,-8.4137207], {icon: cineIcon, title: 'Espacio Coruña', opacity: 0.9});
+        markerEspacio.bindPopup('<p style="font-family: impact; color: #ff0000">Cine Espacio Coruña</p><img src="images/espacio.jpg" height="350px" width="350px"/>');
+
+        var markerPuerto =  L.marker([43.3679879,-8.4022722], {icon: cineIcon, title: 'El Puerto', opacity: 0.9});
+        markerPuerto.bindPopup('<p style="font-family: Georgia; color: #0000ff">Cine Los Cantones Village</p><img src="images/puerto.jpg" height="350px" width="350px"/>');
+
+        var cines = L.layerGroup([markerRosales,markerMarineda,markerPuerto, markerEspacio]);
+
+        var overlayMaps = {
+            'raster' : raster,
+            'municipios': municipios,
+            'tramos de carretera': tramosDeCarretera,
+            'hospitales': hospital,
+            'policia': policia,
+            'fuentes': fuentes,
+            'bomberos' : bomberos,
+            'cines':cines,
+        }
+        
+        var layerControl = new L.control.layers(baseMaps, overlayMaps);
+        var scaleControl = new L.control.scale({'imperial': false});
+        
+        var map = L.map('map');
+        map.setView(new L.LatLng(43.50, -8.25), 10);
+        map.addControl(layerControl);
+        map.addControl(scaleControl);
+        map.addLayer(osmLayer);
+
+
+/*
+        /* ************************************************************** */
+        
+        function onMapClick(e) {
+            popup.setLatLng(e.latlng);
+            popup.setContent("Has pulsado en Lat=" + e.latlng.lat + " Long=" + e.latlng.lng);
+            popup.openOn(map);
+        }
+        var popup = L.popup();
+        map.on('click', onMapClick);
+    </script>
+  </body>
+</html>

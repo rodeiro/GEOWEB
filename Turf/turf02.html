@@ -1,0 +1,114 @@
+﻿<!DOCTYPE html>
+<html>  <!-- MARCADOR DRAGGABLE TOGEOJSON y eso lo metes a TURF.BUFFER -->
+    <head>
+        <meta charset=utf-8 />
+        <title>Gasolineras en un radio de búsqueda - punto móvil</title>
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.css" />
+		<script src="http://cdn.leafletjs.com/leaflet-0.7.1/leaflet.js?2"></script>
+        <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.2/turf.min.js'></script>
+        <script src='geojsons/fuentes.js'></script>
+        <style>
+          html, body {
+			height: 100%;
+			width: 100%;
+			margin: 0;
+			padding: 0;
+		  }
+		  #map {
+			width: 100%;
+			height: 100%;
+		  }
+          .fill-grey {background: #EEE;}
+          .pin-top {top: 0; right: 0; left: 0; position: absolute;} 
+          .padding {padding: 10px 10px 10px 50px;}
+		  .margin {margin: 0px 5px 0px 5px;}
+		  .font {font-family: garamond; font-size: 12pt; font-weight: bold;}
+        </style>
+    </head>
+    <body>
+		<div id='map'></div>
+		<div class="pin-top fill-grey padding font">
+            Elementos en un radio de 
+            <input type="number" id="radius" max="10000" min="0" class="margin" value="" step="100"> metros
+            <p id="numFuentes">Número de elementos encontrados: <p>
+        </div>
+
+        <script>
+            var myMarker = L.marker([43.385961,-8.408684,17],{title: "MyMarker", draggable: "true"});
+				
+			var map = L.map('map');
+            map.addLayer(myMarker);
+
+            var movimiento = function(){
+                myGeoJson = myMarker.toGeoJSON();
+                console.log(myGeoJson.geometry.coordinates);
+            }
+
+            myMarker.on('dragend', movimiento);
+            var osmlayer = L.tileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+              maxZoom: 18,
+              attribution: 'Esri, HERE, DeLorme, MapmyIndia, &copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors. Data: RIE, GeoInformática '
+            }).addTo(map);
+			
+			
+            var fuentesStyle ={radius: 5, fillColor: "red", color: "black",weight: 1, opacity: 1, fillOpacity: 0.7};
+            var fuentesLayer = L.geoJson(geoFuentes, {
+                                        pointToLayer: function (feature, latlng) {
+                                            return L.circleMarker(latlng);
+                                            },
+                                        style: fuentesStyle
+                                    }).addTo(map);
+
+			
+			map.fitBounds(fuentesLayer.getBounds());
+
+		    
+			var bufferLayer = L.geoJson();
+			var fuentesInsideLayer = L.geoJson();
+			
+			function clean() {
+				map.removeLayer(bufferLayer);
+				map.removeLayer(fuentesInsideLayer);
+			}
+			
+            function run() {
+					
+                var radius = document.getElementById('radius').value;
+                if (isNaN(radius)) radius = 500;
+          
+                var buffer =  turf.buffer(myGeoJson, radius/1000, "kilometers");
+
+				var bufferStyle = {stroke: false, fillColor: "blue", fillOpacity: 0.2};
+                bufferLayer = L.geoJson(buffer, {
+                                style: bufferStyle
+                                }).addTo(map);
+
+
+				function isEmpty(val) {
+					if (val) {
+						return val;
+					} else {
+						return "Fuente";
+					}
+				}
+				
+                var fuentesInside =  turf.within(geoFuentes, buffer);
+                var numFuentesInside = 0;
+				
+                fuentesInsideLayer = L.geoJson(fuentesInside, {
+                    onEachFeature: function(feature, layer) {
+                        numFuentesInside++;
+                        layer.bindPopup("<h4>"+isEmpty(feature.properties.NOMBRE)+"</h4><br>"
+                    );},
+                    pointToLayer: function (feature, latlng) {
+                        return L.circleMarker(latlng);
+                    },
+                    style: {radius: 5, fillColor: "green", color: "black",weight: 1, opacity: 1, fillOpacity: 0.7}
+                }).addTo(map);
+                document.getElementById('numFuentes').innerHTML = "Número de estaciones encontradas: " + numFuentesInside;
+            }
+			
+            document.getElementById('radius').onchange = function() {clean(), run()};
+        </script>
+    </body>
+</html>

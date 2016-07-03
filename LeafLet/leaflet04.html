@@ -1,0 +1,114 @@
+﻿<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <script src="https://rawgithub.com/jseppi/Leaflet.MakiMarkers/master/Leaflet.MakiMarkers.js"></script>
+    <script type="text/javascript" src="geojsons/policia.js"></script>
+    <script type="text/javascript" src="geojsons/fuentes.js"></script>
+    <script type="text/javascript" src="geojsons/bomberos.js"></script>
+    <script type="text/javascript" src="geojsons/nightclubs.js"></script>
+    <style>
+      html, body {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      
+      #map {
+        width: 98%;
+        height: 95%;
+        margin-left:auto;
+        margin-right:auto;      
+      }
+
+          .leaflet-popup-content {
+        width:auto !important;
+      }
+
+    </style>
+    <title>Leaflet práctica 4</title>
+  </head> 
+  <body>
+    &nbsp;
+    <div id="map"></div>
+    <script type="text/javascript">
+        var ESRIWorldImageryLayer = new L.TileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}');
+        
+        var geoJsonBomberos;
+        var makiBomberos = L.MakiMarkers.icon({icon: 'fire-station', color: '#ff0000', size: 1});
+        geoJsonBomberos=  L.geoJson(geoBomberos, {
+            pointToLayer: function (feature, latlng) {
+                     return L.marker(latlng, {title: feature.properties.NOMBRE,icon: makiBomberos}).bindPopup('<b>'+feature.properties.NOMBRE+'</b>');;
+            }
+        });
+
+        var geoJsonNightClubs;
+        var makiBar = L.MakiMarkers.icon({icon: 'bar', color: '#009900', size: 1});
+        geoJsonNightClubs=  L.geoJson(geoNightClubs, {
+            pointToLayer: function (feature, latlng) {
+                     return L.marker(latlng, {title: feature.properties.NOMBRE,icon: makiBar}).bindPopup('<b>'+feature.properties.NOMBRE+'</b>');
+            }
+        });
+
+        var geoJsonFuentes;
+        var makiFuentes = L.MakiMarkers.icon({icon: 'water', color: '#99ccff', size: 1});
+        geoJsonFuentes=  L.geoJson(geoFuentes, {
+            pointToLayer: function (feature, latlng) {
+                    if(feature.properties.NOMBRE==undefined){
+                        nombreFuente = "Fuente";
+                    }else{ 
+                        nombreFuente = feature.properties.NOMBRE ;
+                    }
+                     return L.marker(latlng, {title:nombreFuente,icon: makiFuentes}).bindPopup('<b>'+nombreFuente+'</b>');
+            }
+        });
+
+        var geoJsonPolicia;
+        var makiPolicia = L.MakiMarkers.icon({icon: 'police', color: '#0000ff', size: 1});
+        geoJsonPolicia=  L.geoJson(geoPolicia, {
+            pointToLayer: function (feature, latlng) {
+                    if(feature.properties.NOMBRE==undefined){
+                        nombrePolicia = "Policía";
+                    }else{ 
+                        nombrePolicia = feature.properties.NOMBRE ;
+                    }
+                     return L.marker(latlng, {title: nombrePolicia,icon: makiPolicia}).bindPopup('<b>'+nombrePolicia+'</b>');
+            }
+        });
+
+
+ 
+        var map = L.map('map');
+        map.setView(new L.LatLng(43.50, -8.25), 10);
+        map.addLayer(ESRIWorldImageryLayer);
+        map.addLayer(geoJsonBomberos);
+        map.addLayer(geoJsonNightClubs);
+        map.addLayer(geoJsonFuentes);
+        map.addLayer(geoJsonPolicia);
+        map.locate({setView: true, maxZoom: 16});
+
+
+        ////////////////////////////////////////////////////////////GEOLOCALIZACIÓN///////////////////////////////////////////////
+        function onLocationError(e) {
+            alert(e.message);
+        }
+
+
+        function onLocationFound(e) {
+            var radius = e.accuracy / 2;
+            var marker = L.marker(e.latlng);
+            marker.bindPopup("You are within " + radius
+            + " meters from this point").openPopup();
+            var circle = L.circle(e.latlng, radius);
+            map.addLayer(marker);
+            map.addLayer(circle);
+        } 
+
+        map.on('locationfound', onLocationFound);
+        map.on('locationerror', onLocationError);
+
+    </script>
+  </body>
+</html>

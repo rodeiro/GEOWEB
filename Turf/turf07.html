@@ -1,0 +1,48 @@
+﻿<!doctype html>
+<html>
+  <head>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <script src='https://api.tiles.mapbox.com/mapbox.js/plugins/turf/v2.0.2/turf.min.js'></script>
+    <script src='geojsons/puntosTin.js'></script>
+    <style>
+      html, body {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      
+      #map {
+        width: 98%;
+        height: 95%;
+        margin-left:auto;
+        margin-right:auto;      
+      }
+
+          .leaflet-popup-content {
+        width:auto !important;
+      }
+
+    </style>
+    <title>Turf 7: TIN</title>
+  </head>
+  <body>
+    &nbsp;
+    <div id="map"></div>
+    <script type="text/javascript">
+        var stamenWatercolorLayer = new L.TileLayer('http://stamen-tiles-{s}.a.ssl.fastly.net/watercolor/{z}/{x}/{y}.png');
+        var scaleControl = new L.control.scale({'imperial': false});
+        
+        var map = L.map('map');
+        map.setView(new L.LatLng(43.3502902,-8.4258233),13);
+        map.addControl(scaleControl);
+        map.addLayer(stamenWatercolorLayer);
+
+        var tin = turf.tin(geoPuntos, 'ele');
+        var puntosTIN = L.geoJson(tin).addTo(map);
+
+
+    </script>
+  </body>
+</html>
