@@ -1,0 +1,174 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+	<script src="https://maps.googleapis.com/maps/api/js?libraries=drawing,geometry"></script>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        height: 100%;
+      }
+    </style>
+	<title>Google Maps: herramientas de dibujo</title>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+        var map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 64.7608427, lng: -41.7725173},
+          zoom: 6
+        });
+
+        var infoWindow = new google.maps.InfoWindow();
+
+		var drawingOptions = 
+		{
+          drawingMode: google.maps.drawing.OverlayType.MARKER,
+          drawingControl: true,
+          drawingControlOptions: {
+            position: google.maps.ControlPosition.TOP_CENTER,
+            drawingModes: [
+              google.maps.drawing.OverlayType.MARKER,
+              google.maps.drawing.OverlayType.CIRCLE,
+              google.maps.drawing.OverlayType.POLYGON,
+              google.maps.drawing.OverlayType.POLYLINE,
+              google.maps.drawing.OverlayType.RECTANGLE
+            ]
+          },
+          markerOptions: {icon: 'images/iconBomberos.png'},
+          circleOptions: {
+            fillColor: 'blue',
+            fillOpacity: 0.2,
+            strokeWeight: 2,
+			      strokeColor: 'black',
+            clickable: false,
+            editable: false,
+			      draggable: false
+          },
+          rectangleOptions:{
+            fillColor:'yellow',
+            fillOpacity: 0.5,
+            strokeColor: 'green',
+            clickable: false,
+            editable: false,
+            draggable: false
+          },
+          polylineOptions:{
+            editable:false,
+            draggable: false,
+            clickable: false,
+            strokeColor: 'pink',
+            strokeWeight: '5',
+          },
+          polygonOptions:{
+            fillColor:'red',
+            fillOpacity: 0.9,
+            strokeColor: 'black',
+            strokeWeight: 1,
+            editable: false,
+            draggable: false,
+            clickable: false
+          }
+
+        }
+		
+        var drawingManager = new google.maps.drawing.DrawingManager();
+		    drawingManager.setOptions(drawingOptions);
+        drawingManager.setMap(map);
+
+
+        //Handlers
+        function newRectangle(rectangle) {
+
+          var ne = rectangle.getBounds().getNorthEast();
+          var sw = rectangle.getBounds().getSouthWest();
+          var southWest = new google.maps.LatLng(sw.lat(), sw.lng());
+          var northEast = new google.maps.LatLng(ne.lat(), ne.lng());
+          var southEast = new google.maps.LatLng(sw.lat(), ne.lng());
+          var northWest = new google.maps.LatLng(ne.lat(), sw.lng());
+
+
+          var area = google.maps.geometry.spherical.computeArea([northEast, northWest, southWest, southEast]);
+          var areakm = area/1000;
+
+          var contentString = '<b>Nuevo rectángulo.</b><br>' +
+              'Esquina noreste: ' + ne.lat().toFixed(3) + ', ' + ne.lng().toFixed(3) + '<br>' +
+              'Esquina suroeste: ' + sw.lat().toFixed(3) + ', ' + sw.lng().toFixed(3)+
+              '<br> Área: '+areakm.toFixed(2) + ' km2';
+
+          // Set the info window's content and position.
+          infoWindow.setContent(contentString);
+          infoWindow.setPosition(ne);
+
+          infoWindow.open(map);
+
+        }
+
+        function newCircle(circle){
+          var center = new google.maps.LatLng(circle.getCenter().lat(), circle.getCenter().lng());
+
+          var contentString = '<b>Nuevo círculo.</b><br>' +
+              'Centro: ' + circle.getCenter().lat().toFixed(3) + ', ' + circle.getCenter().lng().toFixed(3)+
+              '<br> Radio: '+circle.getRadius().toFixed(2)/1000 + ' km2';
+
+          infoWindow.setContent(contentString);
+          infoWindow.setPosition(center);
+
+          infoWindow.open(map);
+        }
+
+
+        function newPolygon(polygon){
+          var area = google.maps.geometry.spherical.computeArea(polygon.getPath());
+          var areakm = area /1000;
+
+          var contentString = '<b>Nuevo polígono.</b><br>' +
+              '<br> Área: '+areakm.toFixed(3) + ' km2';
+
+          infoWindow.setContent(contentString);
+          infoWindow.setPosition(polygon.getPath().getArray()[0]);
+
+          infoWindow.open(map);
+
+        }
+
+        function newLine(line){
+          var largo = google.maps.geometry.spherical.computeLength(line.getPath()); 
+          var largokm = largo /1000;
+          var contentString = '<b>Nueva línea.</b><br>' +
+              '<br> Longitud: '+largokm.toFixed(3) + ' km';
+
+          infoWindow.setContent(contentString);
+          infoWindow.setPosition(line.getPath().getArray()[0]);
+
+          infoWindow.open(map);
+
+        }
+
+        function newMarker(marker){
+          var lat = marker.getPosition().lat().toFixed(3);
+          var lng = marker.getPosition().lng().toFixed(3);
+
+          var contentString = '<b>Nuevo punto.</b><br>' +
+              '<br> Posición: '+lat+" ,"+lng;
+
+          infoWindow.setContent(contentString);
+          infoWindow.setPosition(marker.getPosition());
+
+          infoWindow.open(map);
+
+        }
+
+        //Listeners
+        google.maps.event.addListener(drawingManager, 'markercomplete', newMarker);
+        google.maps.event.addListener(drawingManager, 'polylinecomplete', newLine);
+        google.maps.event.addListener(drawingManager, 'rectanglecomplete', newRectangle);
+        google.maps.event.addListener(drawingManager, 'circlecomplete', newCircle);
+        google.maps.event.addListener(drawingManager, 'polygoncomplete', newPolygon);
+    </script>
+  </body>
+</html>

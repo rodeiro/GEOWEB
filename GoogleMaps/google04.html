@@ -1,0 +1,223 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <script src="http://maps.googleapis.com/maps/api/js"></script>
+
+    <style>
+      html, body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      }
+
+    .checkbox {
+        background: white;
+        font-family: verdana;
+        font-size: 12px;
+        padding: 6px 8px;
+        margin-top: 10px;
+       }
+      
+      #map {
+      width: 100%;
+      height: 100%;
+      }
+
+    </style>
+    <title>Google Maps: selección de capas base</title>
+  </head>
+  <body>
+  <div id="map"></div>
+  <div class="checkbox" id="selector">
+      <input type="checkbox" id="policia" class="overlayCheck" onclick="visualizarPolicia()"/>
+      <label for="policia">Policia</label>
+      <input type="checkbox" id="fuentes" class="overlayCheck" onclick="visualizarFuentes()"/>
+      <label for="policia">Fuentes</label>
+  </div>
+
+  <script>
+    var map;
+    var stamenWatercolor = new google.maps.ImageMapType({
+      getTileUrl: function(coord,zoom){
+        return 'http://stamen-tiles.a.ssl.fastly.net/watercolor/'+zoom+'/'+coord.x+'/'+coord.y+'.png';
+      },
+    tileSize: new google.maps.Size(256, 256), 
+    name: "STAMEN",
+    maxZoom: 18,
+    alt: "Muestra el mapa de visualización de STAMEN",
+
+    });
+
+    var osmMapType = new google.maps.ImageMapType ({
+    getTileUrl: function (coord, zoom) {
+      return "http://tile.openstreetmap.org/" + zoom + "/" + coord.x + "/" + coord.y + ".png";
+    },
+    tileSize: new google.maps.Size(256, 256), 
+    name: "OpenStreetMap",
+    maxZoom: 18,
+    alt: "Muestra el mapa de visualización de OpenStreetMap",
+    });
+
+    //NUEVA OPCIÓN CON ESTILO
+
+        var styles = [
+      {
+        stylers: [
+          { hue: "#e60000" },
+          { saturation: 0 }
+        ]
+      },{
+        featureType: "road",
+        elementType: "geometry",
+        stylers: [
+          { lightness: 100 },
+          { visibility: "on" }
+        ]
+      },{
+        featureType: "road",
+        elementType: "labels",
+        stylers: [
+          { hue: "#3333cc" }
+              ]
+      }
+    ];
+
+
+    var styledMap = new google.maps.StyledMapType(styles, {name:'MyStyle'});
+    
+    var mapOptions = {
+      center: new google.maps.LatLng(43.50, -8.25),
+      zoom: 10,
+      // Control de seleccion de basemaps
+      mapTypeControlOptions: {mapTypeIds: [google.maps.MapTypeId.ROADMAP,google.maps.MapTypeId.HYBRID,'OSM','Water','CoolStyle']},
+    };
+    
+    var mapElement = document.getElementById("map");
+    map = new google.maps.Map(mapElement, mapOptions);
+        
+    // Creación de un popup
+    var infoWindow = new google.maps.InfoWindow();
+    
+    map.mapTypes.set('OSM', osmMapType);
+    map.setMapTypeId('OSM');
+    map.mapTypes.set('Water',stamenWatercolor);
+    map.mapTypes.set('CoolStyle', styledMap);
+
+
+    var selector = document.getElementById('selector');
+    map.controls[google.maps.ControlPosition.TOP_RIGHT].push(selector);
+
+
+    function isEmpty(val) {
+        if (val) {
+          return val;
+        } else {
+          return "Punto de interés";
+        }
+    }
+
+    function info(e) {
+        var feature = e.feature;
+        if (feature.getGeometry().getType() == "Point") {
+          infoWindow.setContent(isEmpty(feature.getProperty('NOMBRE')));
+          infoWindow.setPosition(e.latLng);
+          infoWindow.setOptions({pixelOffset: new google.maps.Size(0, -10)});
+          infoWindow.open(map);
+        } else if (feature.getGeometry().getType() == "LineString"){
+          infoWindow.setContent(isEmpty(feature.getProperty('NOMBRE')));
+          infoWindow.setPosition(e.latLng);
+          infoWindow.setOptions({pixelOffset: new google.maps.Size(0, -10)});
+          infoWindow.open(map);
+        } else if (feature.getGeometry().getType() == "Polygon") {
+          infoWindow.setContent("<p><b>" + feature.getProperty('NOMBRE') + "</b></p><img src=" + feature.getProperty('image') + " height='200px' width='250px'></img>");
+          infoWindow.setPosition(e.latLng);
+          infoWindow.setOptions({pixelOffset: new google.maps.Size(0, -10)});
+          infoWindow.open(map);
+        }
+    }
+
+
+
+        function modificarEstilos(feature) {
+        
+          var geom = feature.getGeometry();
+                  if (geom.getType() == 'Point') {
+                      var pointOptions = {
+                        title: "Punto de interés!"
+                      }
+                    return pointOptions;
+                  }
+                  else if (geom.getType() == 'LineString') {
+                      var lineOptions = {
+                          strokeWeight: 7,
+                          strokeColor: '#FF0000',
+                          strokeOpacity: 0.8,
+                      };
+            
+            return lineOptions;
+                  }
+                  else if (geom.getType() == 'Polygon') {
+                      var polygonOptions = {
+                          strokeColor: '#FF0000',
+                          strokeOpacity: 0.9,
+                          strokeWeight: 3,
+                          fillColor: '#FFFF00',
+                          fillOpacity: 0.25,
+                          map: map
+                      };
+
+                      return polygonOptions;
+                  }
+        }
+
+
+    var datosP = new google.maps.Data();
+    datosP.loadGeoJson('geojsons/policia.json');
+    datosP.setStyle(modificarEstilos);
+    datosP.addListener('click', info);
+
+    var datosF = new google.maps.Data();
+    datosF.loadGeoJson('geojsons/fuentes.json');
+    datosF.setStyle(modificarEstilos);
+    datosF.addListener('click', info);
+
+
+
+    function visualizarPolicia() {
+
+     var checkElement = document.getElementById("policia");
+        if (checkElement.checked) {
+           if (datosP.getMap() == null) {
+            datosP.setMap(map);
+           }
+        } else {
+          datosP.setMap(null);
+        }
+      }
+
+
+    function visualizarFuentes() {
+
+     var checkElement = document.getElementById("fuentes");
+        if (checkElement.checked) {
+           if (datosF.getMap() == null) {
+            datosF.setMap(map);
+           }
+        } else {
+          datosF.setMap(null);
+        }
+      }
+             
+    function clean() {
+      var checkbox = document.getElementsByClassName("overlayCheck");
+      for (var i = 0; i < checkbox.length; i++) {
+          checkbox[i].checked = false;
+      }
+    }
+
+    window.onload = clean();
+  </script>
+  </body>
+
+</html>

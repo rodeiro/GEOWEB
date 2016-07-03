@@ -1,0 +1,20 @@
+{
+"type": "FeatureCollection",
+                                                                                
+"features": [
+{ "type": "Feature", "properties": { "ID": 471039023.000000, "NOMBRE": null }, "geometry": { "type": "Point", "coordinates": [ -8.4079981, 43.3583364 ] } },
+{ "type": "Feature", "properties": { "ID": 1479476568.000000, "NOMBRE": "Comisaría de Policía Nacional" }, "geometry": { "type": "Point", "coordinates": [ -8.2248553, 43.4847542 ] } },
+{ "type": "Feature", "properties": { "ID": 1695015945.000000, "NOMBRE": "Policía Municipal" }, "geometry": { "type": "Point", "coordinates": [ -8.3965987, 43.3763872 ] } },
+{ "type": "Feature", "properties": { "ID": 1711442061.000000, "NOMBRE": "Policía Nacional de A Coruña" }, "geometry": { "type": "Point", "coordinates": [ -8.4150967, 43.3467794 ] } },
+{ "type": "Feature", "properties": { "ID": 1724493661.000000, "NOMBRE": "Policía Local" }, "geometry": { "type": "Point", "coordinates": [ -8.4214104, 43.3381672 ] } },
+{ "type": "Feature", "properties": { "ID": 1993430289.000000, "NOMBRE": "Policía Local" }, "geometry": { "type": "Point", "coordinates": [ -8.2150721, 43.4970684 ] } },
+{ "type": "Feature", "properties": { "ID": 2017901903.000000, "NOMBRE": "Garda Civil" }, "geometry": { "type": "Point", "coordinates": [ -8.3792418, 43.3210527 ] } },
+{ "type": "Feature", "properties": { "ID": 2043881609.000000, "NOMBRE": null }, "geometry": { "type": "Point", "coordinates": [ -8.5051711, 43.3049063 ] } },
+{ "type": "Feature", "properties": { "ID": 2131248999.000000, "NOMBRE": "Guardia Civil De Sada" }, "geometry": { "type": "Point", "coordinates": [ -8.257267, 43.3536013 ] } },
+{ "type": "Feature", "properties": { "ID": 2283167983.000000, "NOMBRE": "Garda Civil" }, "geometry": { "type": "Point", "coordinates": [ -8.0596458, 43.285514 ] } },
+{ "type": "Feature", "properties": { "ID": 2378871734.000000, "NOMBRE": "Policía Local de Mugardos" }, "geometry": { "type": "Point", "coordinates": [ -8.2550125, 43.4604616 ] } },
+{ "type": "Feature", "properties": { "ID": 2383996211.000000, "NOMBRE": "Polícia Local de Ares" }, "geometry": { "type": "Point", "coordinates": [ -8.243791, 43.4266737 ] } },
+{ "type": "Feature", "properties": { "ID": 2442519136.000000, "NOMBRE": "Guardia Civil" }, "geometry": { "type": "Point", "coordinates": [ -8.0726748, 43.532871 ] } },
+{ "type": "Feature", "properties": { "ID": 3759028546.000000, "NOMBRE": "Policia Local" }, "geometry": { "type": "Point", "coordinates": [ -8.2533455, 43.4633072 ] } }
+]
+}

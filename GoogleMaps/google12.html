@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+	<script src="https://maps.googleapis.com/maps/api/js?libraries=places"></script>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        height: 100%;
+      }
+    </style>
+	<title>Google Maps: búsqueda de lugares cercanos</title>
+  </head>
+  <body>
+    <div id="map"></div>
+    <select id="selector" onchange="typeChanger()">
+        <option value="restaurant">Restaurantes</option>
+        <option value="bar">Bars</option>
+        <option value="bank">Bancos</option>
+        <option value="pharmacy">Farmacias</option>
+    </select>
+	 <script>
+      var map;
+      var infowindow;
+      var markers = [];
+      var type = 'restaurant';
+
+      var localizacion = new google.maps.LatLng(43.3567486,-8.4068699),
+
+      map = new google.maps.Map(document.getElementById('map'), {
+          center: localizacion,
+          zoom: 15
+      });
+
+      infowindow = new google.maps.InfoWindow();
+      var service = new google.maps.places.PlacesService(map);
+      var selector = document.getElementById('selector');
+      map.controls[google.maps.ControlPosition.TOP_CENTER].push(selector);
+
+
+      function callback(results, status) {
+        if (status == google.maps.places.PlacesServiceStatus.OK) {
+          for (var i = 0; i < results.length; i++) {
+            createMarker(results[i]);
+          }
+        }
+      }
+
+      function servicioBusqueda(){
+          for(var i in markers){
+              markers[i].setMap(null);
+          }
+
+          service.nearbySearch({
+              location: localizacion,
+              radius: 3000,
+              type: type
+          }, callback);
+      }
+
+      function markerHandler(event){
+          localizacion = event.latLng;
+          servicioBusqueda();
+      }
+
+      var dragMarker = new google.maps.Marker({
+             position: localizacion,
+             map: map,
+             draggable: true,
+             title: "Arrástrame :)",
+             animation: google.maps.Animation.DROP
+      });
+
+      dragMarker.addListener('dragend',markerHandler);
+
+
+      function createMarker(place) {
+      		var image = {
+      		  url: place.icon,
+      		  anchor: new google.maps.Point(17, 34),
+      		  scaledSize: new google.maps.Size(25, 25)
+    		  };
+
+          var marker = new google.maps.Marker({
+              map: map,
+              position: place.geometry.location,
+        		  icon: image,
+        		  title: place.Name
+          });
+
+          markers.push(marker);
+
+          google.maps.event.addListener(marker, 'click', function() {
+    		  if (place.photos) {
+    			infowindow.setContent('<b>' + place.name + '</b>' + 
+                    '</br></br><img src=' + place.photos[0].getUrl({'maxWidth': 100, 'maxHeight': 100}) + '></img>');
+    			infowindow.setOptions({maxWidth: 100});
+    			infowindow.open(map, this);
+    		  } else {
+    			infowindow.setContent('<b>Nombre: </b> ' + place.name);
+    			infowindow.open(map, this);
+    		  }
+            });
+      }
+
+
+
+    function typeChanger(){
+      var elemento = document.getElementById("selector");
+      var marcada = elemento.options[elemento.selectedIndex].value;
+      type= marcada;
+      servicioBusqueda();
+    }
+
+    </script>
+
+  </body>
+</html>

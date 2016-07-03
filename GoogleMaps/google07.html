@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js"></script>
+	<script type="text/javascript" src="cluster/src/markerclusterer.js"></script>
+	<style type="text/css">
+	  html, body {
+		height: 100%;
+		width: 100%;
+		margin: 0;
+		padding: 0;
+	  }
+	  #map {
+		width: 100%;
+		height: 100%;
+	  }
+	</style>
+  </head>
+  <body>
+	<!-- COMPLETAR -->
+	<div id="map"></div>
+	<div id= 'control'>
+		<button onclick="addStandardMarker()">STANDARD</button>
+		<button onclick="addIconMarker()">CUSTOM</button>
+		<select id="maxZoom" onclick="zoomChanger()">
+		  <option value="7">7</option>
+		  <option value="8">8</option>
+		  <option value="9">9</option>
+		  <option value="10">10</option>
+		  <option value="11">11</option>
+		  <option value="12">12</option>
+		  <option value="13">13</option>
+		  <option value="14">14</option>
+		</select>
+
+		<select id="gridSize" onclick="gridChanger()">
+		  <option value="40">40</option>
+		  <option value="50">50</option>
+		  <option value="70">70</option>
+		  <option value="80">80</option>
+		</select>
+		<button onclick="clean()">RESET</button>
+	</div>
+	<title>Google Maps: random markers</title>
+	<script type="text/javascript">
+	  var map;
+	  var markers = [];
+	  var customMarkers = [];
+	  var count = 1;
+
+
+	  // Definición de latitudes / longitudes mínimas y máximas para determinar
+	  // el área donde se crearán los marcadores
+	  var minLat =  44;
+	  var maxLat = 43;
+	  var minLng = -9;
+	  var maxLng = -8
+
+	var infoWindow = new google.maps.InfoWindow({});
+
+	  
+	// Inicialización 
+	var mapOptions = {
+			center: new google.maps.LatLng(43.3570049,-8.4072441),
+			zoom: 8,
+			mapTypeId: google.maps.MapTypeId.ROADMAP
+	};
+
+	var mapElement = document.getElementById("map");
+	map = new google.maps.Map(mapElement, mapOptions);
+
+    var selector = document.getElementById('control');
+    map.controls[google.maps.ControlPosition.TOP_CENTER].push(selector);
+
+    var cluster = new MarkerClusterer(map, markers,{maxZoom: 10, gridSize: 50});
+
+	 
+	function redraw() {
+	  	cluster.redraw;
+	  }
+	  
+	function clean() {
+
+		cluster.clearMarkers();
+		
+	  	for( var i in markers ){
+			markers[i].setMap(null);
+		}
+
+		for( var i in customMarkers ){
+			customMarkers[i].setMap(null);
+		}
+
+	  }
+	  
+
+	  function createRandomLatLng() {
+			var deltaLat = maxLat - minLat;
+			var deltaLng = maxLng - minLng;
+			var rndNumLat = Math.random();
+			var newLat = minLat + rndNumLat * deltaLat;
+			var rndNumLng = Math.random();
+			var newLng = minLng + rndNumLng * deltaLng;
+			return new google.maps.LatLng(newLat, newLng);
+	  }
+
+	  function addStandardMarker() {
+			var coordinate = createRandomLatLng();
+			var marker = new google.maps.Marker({
+	            position: coordinate,
+	            map: map,
+	            title: "Marcador "+count,
+	            animation: google.maps.Animation.DROP
+        	});
+        	markers.push(marker);
+        	cluster.addMarker(marker);
+			count++;
+	  }
+
+	  function addIconMarker() {
+			var markerIcons = ['woman', 'library_maps', 'schools_maps', 'info-i_maps', 'parking_lot_maps','trail'];
+			var iconPosition = count % 6;
+			var rndMarkerId = Math.floor(Math.random() * markerIcons.length);
+			var coordinate = createRandomLatLng();
+			
+			var customMarker = new google.maps.Marker({
+	            position: coordinate,
+	            map: map,
+	            icon: 'https://maps.google.com/mapfiles/kml/shapes/'+markerIcons[iconPosition]+'.png',
+	            title: "Marcador "+count,
+	            animation: google.maps.Animation.DROP
+        	});
+
+        	customMarkers.push(customMarker);
+        	cluster.addMarker(customMarker);
+			count++;
+		}
+
+
+	function gridChanger(){
+		var elemento = document.getElementById("gridSize");
+		var marcada = elemento.options[elemento.selectedIndex].value;
+		cluster.setGridSize(parseInt(marcada));
+		redraw();
+	}
+
+	function zoomChanger(){
+		var elemento = document.getElementById("maxZoom");
+		var marcada = elemento.options[elemento.selectedIndex].value;
+		cluster.setMaxZoom(parseInt(marcada));
+		redraw();
+
+		infoWindow.setPosition(map.getCenter());
+		infoWindow.setContent('El nuevo zoom es '+marcada);
+		infoWindow.open(map);
+	}
+	</script>
+  </body>
+</html>

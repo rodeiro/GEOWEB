@@ -1,0 +1,188 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<script src="http://maps.googleapis.com/maps/api/js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+		<style>
+		  html, body {
+			height: 100%;
+			width: 100%;
+			margin: 0;
+			padding: 0;
+		  }
+
+		.checkbox {
+        background: white;
+        font-family: verdana;
+        font-size: 12px;
+        padding: 6px 8px;
+        margin-top: 10px;
+       }
+		  
+		  #map {
+			width: 100%;
+			height: 100%;
+		  }
+		</style>
+		<title>Google Maps: coordinates on click</title>
+	</head>
+	<body>
+	<div id="map"></div>
+	<div class="checkbox" id="selector">
+      <input type="checkbox" id="policia" class="overlayCheck" onclick="visualizarPolicia()"/>
+      <label for="policia">Policía</label>
+      <input type="checkbox" id="fuentes" class="overlayCheck" onclick="visualizarFuentes()"/>
+      <label for="policia">Fuentes</label>
+  	</div>
+	<script>
+	
+		var map;  
+		var currentCoords;
+		// Inicialización 
+		var mapOptions = {
+				center: new google.maps.LatLng(43.3570049,-8.4072441),
+				zoom: 10,
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+		};
+		var mapElement = document.getElementById("map");
+		map = new google.maps.Map(mapElement, mapOptions);
+
+
+		 var marker = new google.maps.Marker({
+    		map: map,
+    		title: 'Position'
+  		});
+
+//************************POP WITH COORDS ************************************************
+		var infoWindow = new google.maps.InfoWindow({
+
+		});
+
+		 google.maps.event.addListener(map, 'click', function(event) {
+		 		infoWindow.setPosition(event.latLng);
+		 		infoWindow.setContent(event.latLng.toString());
+		 		infoWindow.open(map);
+		 });
+
+//************************MARKERS MANAGEMENT***********************************************************
+	var policeIcon = 'images/iconPolice.png';
+	var fountainIcon = 'images/iconFountain.png';
+	var markers  = [];
+
+
+    var selector = document.getElementById('selector');
+    map.controls[google.maps.ControlPosition.TOP_RIGHT].push(selector);
+
+    function isEmpty(val) {
+        if (val) {
+          return val;
+        } else {
+          return "Punto de interés";
+        }
+    }
+
+
+
+	function bindInfoWindow(marker, map, infowindow, strDescription) {
+	    google.maps.event.addListener(marker, 'click', function () {
+	        infowindow.setContent(strDescription+" <img src='http://www.tupublicidadcreativa.com/images/BannerPublicidad.png'>");
+	        infowindow.open(map, marker);
+	    });
+	}
+
+	var i = 0;
+	function jsonManager(currentJson, contentType){
+
+
+		$.each(currentJson.features, function (key, data) {
+
+  		var latLng = new google.maps.LatLng(data.geometry.coordinates[1], data.geometry.coordinates[0]);
+  		var desc = isEmpty(data.properties.NOMBRE);
+
+  		markers[i] = new google.maps.Marker({
+  			id: data.properties.ID,
+            position: latLng,
+            map: null,
+            icon: policeIcon,
+            title: "Policia",
+            animation: google.maps.Animation.DROP
+        });
+
+
+        if (contentType) {
+        	markers[i].setIcon(fountainIcon);
+        	markers[i].setTitle("Fuente");
+        }
+
+
+		google.maps.event.addListener(markers[i], 'click', function() {
+			for( var i in markers ){
+			    markers[i].setAnimation(null);
+			    if( markers[i].id == data.properties.ID) {
+			    	markers[i].setAnimation(google.maps.Animation.BOUNCE);
+			    	map.setCenter(markers[i].position);
+			    }
+			    
+			}
+		});
+
+  		var details = desc;
+  		bindInfoWindow(markers[i], map, infoWindow, details);
+  		i++;
+  	  });
+
+	}
+
+
+//DATA FROM POLICE JSON
+  $.getJSON('geojsons/policia.json', function(jsonPolice) {
+  	jsonManager(jsonPolice, 0);
+ });
+
+
+
+  //DATA FROM FOUNTAINS JSON
+  $.getJSON('geojsons/fuentes.json', function(jsonFountain) {
+  	jsonManager(jsonFountain, 1);
+ });
+
+
+
+map.addListener('click', function() {
+	for( var i in markers ){
+		markers[i].setAnimation(null);
+
+		//markers[i].setMap(null);
+	}
+});
+
+ function visualizarPolicia() {
+ 		for( var i in markers ){
+ 			if(markers[i].title=="Policia"){
+ 				if(markers[i].map == null){
+ 					markers[i].setMap(map);
+ 				}else{
+ 					markers[i].setMap(null);
+ 				}
+ 			}
+ 		}
+ }
+
+  function visualizarFuentes() {
+
+ 		for( var i in markers ){
+ 			if(markers[i].title=="Fuente"){
+ 				if(markers[i].map == null){
+ 					markers[i].setMap(map);
+ 				}else{
+ 					markers[i].setMap(null);
+ 				}
+ 			}
+ 		}
+ }
+
+             
+	</script>
+	</body>
+
+</html>

@@ -1,0 +1,81 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <script src="http://maps.googleapis.com/maps/api/js"></script>
+    <style>
+      html, body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      }
+      
+      #map {
+      width: 100%;
+      height: 100%;
+      }
+    </style>
+    <title>Google Maps: mapa básico</title>
+  </head>
+  <body>
+  <div id="map"></div>
+  <button id="centrar" type="button" >Centrar</button>
+  <button id="nuevoCentro" type="button" >Nuevo centro</button>
+  <script>
+  
+    var map;  
+    var mapElement = document.getElementById("map");
+
+
+    var centrar = document.getElementById('centrar');
+    var centro = new google.maps.LatLng(43.3627491,-8.4158734);
+    var nuevoCentro = document.getElementById('nuevoCentro');
+    var marker;
+
+
+    function error(err) {
+      alert('PROBLEMAS AL GEOLOCALIZAR, LO SIENTO :( (No funciona muy bien con algunas versiones de Firefox)');
+    }
+
+    function success(position) {
+
+        var lat = position.coords.latitude;
+        var lon = position.coords.longitude;
+        var centro = new google.maps.LatLng(lat, lon);
+
+       marker = new google.maps.Marker({ position: centro, map: map,
+       title:"Tu ubicación"});
+    }
+
+
+  if (navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(success, error);
+  }
+
+
+    var mapOptions = {
+        center: centro,
+        zoom: 10,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+
+    map = new google.maps.Map(mapElement, mapOptions);
+
+
+    centrar.addEventListener('click', function () {
+      marker.setMap(null);
+      map.setCenter(centro);
+    });
+
+    nuevoCentro.addEventListener('click',function(){
+      marker.setMap(null);
+      centro= map.getCenter();
+    });
+
+    map.controls[google.maps.ControlPosition.TOP_CENTER].push(centrar);
+    map.controls[google.maps.ControlPosition.TOP_CENTER].push(nuevoCentro);
+
+  </script>
+  </body>
+
+</html>

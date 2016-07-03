@@ -1,0 +1,95 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <script src="http://maps.googleapis.com/maps/api/js"></script>
+
+    <style>
+      html, body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      }
+      
+      #map {
+      width: 100%;
+      height: 100%;
+      }
+
+    </style>
+    <title>Google Maps: selección de capas base</title>
+  </head>
+  <body>
+  <div id="map"></div>
+  <script>
+    var map;
+
+
+
+    var stamenWatercolor = new google.maps.ImageMapType({
+      getTileUrl: function(coord,zoom){
+        return 'http://stamen-tiles.a.ssl.fastly.net/watercolor/'+zoom+'/'+coord.x+'/'+coord.y+'.png';
+      },
+    tileSize: new google.maps.Size(256, 256), 
+    name: "STAMEN",
+    maxZoom: 18,
+    alt: "Muestra el mapa de visualización de STAMEN",
+
+    });
+
+    var osmMapType = new google.maps.ImageMapType ({
+    getTileUrl: function (coord, zoom) {
+      return "http://tile.openstreetmap.org/" + zoom + "/" + coord.x + "/" + coord.y + ".png";
+    },
+    tileSize: new google.maps.Size(256, 256), 
+    name: "OpenStreetMap",
+    maxZoom: 18,
+    alt: "Muestra el mapa de visualización de OpenStreetMap",
+    });
+
+    //NUEVA OPCIÓN CON ESTILO
+
+        var styles = [
+      {
+        stylers: [
+          { hue: "#e60000" },
+          { saturation: 0 }
+        ]
+      },{
+        featureType: "road",
+        elementType: "geometry",
+        stylers: [
+          { lightness: 100 },
+          { visibility: "on" }
+        ]
+      },{
+        featureType: "road",
+        elementType: "labels",
+        stylers: [
+          { hue: "#3333cc" }
+              ]
+      }
+    ];
+
+
+    var styledMap = new google.maps.StyledMapType(styles, {name:'MyStyle'});
+    
+    var mapOptions = {
+      center: new google.maps.LatLng(43.50, -8.25),
+      zoom: 10,
+      // Control de seleccion de basemaps
+      mapTypeControlOptions: {mapTypeIds: [google.maps.MapTypeId.ROADMAP,google.maps.MapTypeId.HYBRID,'OSM','Water','CoolStyle']},
+    };
+    
+    var mapElement = document.getElementById("map");
+    map = new google.maps.Map(mapElement, mapOptions);
+    
+    map.mapTypes.set('OSM', osmMapType);
+    map.setMapTypeId('OSM');
+    map.mapTypes.set('Water',stamenWatercolor);
+    map.mapTypes.set('CoolStyle', styledMap);
+    
+  </script>
+  </body>
+
+</html>

@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?&libraries=geometry"></script>
+	<style type="text/css">
+	  html, body {
+		height: 100%;
+		width: 100%;
+		margin: 0;
+		padding: 0;
+	  }
+	  #map {
+		width: 100%;
+		height: 100%;
+	  }
+
+	  #currentLoc{
+	  	background-color: yellow;
+	  	font-family: impact,arial;
+	  	border-color: yellow;
+	  }
+	</style>
+  </head>
+  <body>
+	<!-- COMPLETAR -->
+	<div id="map"></div>
+	<div id="currentLoc"></div>
+	<div id="botones">
+		<button onclick="nuevaPregunta()">Adivina</button>
+		<button onclick="comprobarRespuesta()">Comprueba</button>
+	</div>
+	<script type="text/javascript">
+		  
+	var infoWindow = new google.maps.InfoWindow({});
+	var currentClick;
+	var mapOptions = {
+			center: new google.maps.LatLng(43.3570049,-8.4072441),
+			zoom: 14,
+			mapTypeId: google.maps.MapTypeId.SATELLITE,
+			mapTypeControlOptions: {mapTypeIds: []}
+	};
+
+	var mapElement = document.getElementById("map");
+	map = new google.maps.Map(mapElement, mapOptions);
+	
+	var currentLoc = document.getElementById('currentLoc');
+    map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(currentLoc);
+    var botones = document.getElementById('botones');
+    map.controls[google.maps.ControlPosition.TOP_CENTER].push(botones);
+
+
+    google.maps.event.addListener(map, 'mousemove', function (event) {
+        displayCoordinates(event.latLng);               
+    });
+
+
+    google.maps.event.addListener(map, 'click', function(event) {
+    	currentClick = event.latLng;
+	});
+
+
+	var cityCircle = new google.maps.Circle({
+		center: new google.maps.LatLng(43.3570049,-8.4072441),
+		radius: 300,
+		strokeColor: 'blue',
+		strokeOpacity: 1.0,
+		strokeWeight: 2,
+		fillColor: 'white',
+		fillOpacity: 0.35,
+		draggable: true, 
+		clickable: true,
+		visible: true,
+		map:map
+	});
+
+  	cityCircle.addListener('dragend',function(event) {
+		currentClick = event.latLng;
+    });
+
+
+
+ 
+	function displayCoordinates(pnt) {
+          var coordsLabel = document.getElementById("currentLoc");
+          var lat = pnt.lat();
+          lat = lat.toFixed(4);
+          var lng = pnt.lng();
+          lng = lng.toFixed(4);
+          coordsLabel.innerHTML = "Latitud: " + lat + "  Longitud: " + lng;
+     }
+
+		
+		// Preguntas asociadas al control 'Adivina', con coordenadas e imagenes asociadas
+		var infoContentsText = ['... donde está la Torre de Hércules!', '... donde está el Louvre!', '... donde está la Sagrada Familia!', '... donde está el Big Ben!', 
+								'... donde está Alcatraz!',];
+		var infoContentsCoord = [
+			 [43.3860396,-8.4072092],
+			 [48.8605919,2.3374066],
+			 [41.4036,2.1743708],
+			 [51.5007148,-0.1250472],
+			 [37.827094,-122.4243771]		
+			 ];
+
+		var infoContentsImg = [
+			 'http://www.torredeherculesacoruna.com/images/rollover/16/big/2.jpg',
+			 'https://media-cdn.tripadvisor.com/media/photo-s/05/6b/c7/ee/musee-du-louvre.jpg',
+			 'http://unbuendiaenbarcelona.com/wp-content/uploads/2015/10/2015-06-10-sagradafamiliag.jpg',
+			 'https://www.dreamhouseapartments.com/wp-content/uploads/2014/09/Big-Ben-and-The-Palace-of-Westminster.jpg',
+			 'http://img.absoluteeuu.com/wp-content/uploads/2016/01/alcatraz.jpg'		
+			 ];
+		
+		var rndIndex = null;
+				   
+		function nuevaPregunta(e) {
+			infoWindow.close();
+			rndIndex = Math.floor(Math.random() * infoContentsText.length);
+			//rndIndex = 0;
+			alert(infoContentsText[rndIndex]);
+			
+		}
+		
+		function comprobarRespuesta(e) {
+			if (rndIndex == null) {
+				alert('Tiene que pulsar antes sobre el botón "Adivina.."');
+			} else {
+
+				var latLngGoo = new google.maps.LatLng(parseFloat(infoContentsCoord[rndIndex][0]),parseFloat(infoContentsCoord[rndIndex][1]));
+				var distancia =  google.maps.geometry.spherical.computeDistanceBetween(latLngGoo, currentClick);
+				
+				if(distancia<301){
+					infoWindow.setPosition(latLngGoo);
+		 			infoWindow.setContent('<b>¡Enhorabuena!</b><br> <img src="'+infoContentsImg[rndIndex]+'" height="90" width="122">');
+		 			infoWindow.open(map);
+				}else{
+					alert("¿Te has perdido?");
+				}
+			}
+		}
+
+	</script>
+  </body>
+</html>

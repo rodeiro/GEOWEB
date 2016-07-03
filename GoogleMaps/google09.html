@@ -1,0 +1,215 @@
+﻿<!DOCTYPE html>
+<html>
+	<head>
+		<script src="http://maps.googleapis.com/maps/api/js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+		<style>
+		  html, body {
+			height: 100%;
+			width: 100%;
+			margin: 0;
+			padding: 0;
+		  }
+
+		.checkbox {
+        background: white;
+        font-family: verdana;
+        font-size: 12px;
+        padding: 6px 8px;
+        margin-top: 10px;
+       }
+		  
+		  #map {
+			width: 100%;
+			height: 100%;
+		  }
+		</style>
+		<title>Google Maps: coordinates on click</title>
+	</head>
+	<body>
+	<div id="map"></div>
+	<div class="checkbox" id="selector">
+      <input type="checkbox" id="policia" class="overlayCheck" onclick="visualizarPolicia()"/>
+      <label for="policia">Policía</label>
+      <input type="checkbox" id="fuentes" class="overlayCheck" onclick="visualizarFuentes()"/>
+      <label for="fuentes">Fuentes</label>
+      <input type="checkbox" id="bomberos" class="overlayCheck" onclick="visualizarBomberos()"/>
+      <label for="bomberos">Bomberos</label>
+      <input type="checkbox" id="bares" class="overlayCheck" onclick="visualizarBares()"/>
+      <label for="bares">Bares</label>
+  	</div>
+	<script>
+	
+		var map;  
+		var currentCoords;
+		// Inicialización 
+		var mapOptions = {
+				center: new google.maps.LatLng(43.3570049,-8.4072441),
+				zoom: 10,
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+		};
+		var mapElement = document.getElementById("map");
+		map = new google.maps.Map(mapElement, mapOptions);
+
+
+		 var marker = new google.maps.Marker({
+    		map: map,
+    		title: 'Position'
+  		});
+
+		var infoWindow = new google.maps.InfoWindow({
+
+		});
+
+
+
+//************************MARKERS MANAGEMENT***********************************************************
+	var policeIcon = 'images/iconPolice.png';
+	var fountainIcon = 'images/iconFountain.png';
+	var bomberosIcon = 'images/iconBomberos.png';
+	var baresIcon = 'images/iconBares.png';
+
+	var markers  = [];
+
+
+    var selector = document.getElementById('selector');
+    map.controls[google.maps.ControlPosition.TOP_RIGHT].push(selector);
+
+    function isEmpty(val) {
+        if (val) {
+          return val;
+        } else {
+          return "Punto de interés";
+        }
+    }
+
+
+
+	function bindInfoWindow(marker, map, infowindow, strDescription) {
+	    google.maps.event.addListener(marker, 'click', function () {
+	        infowindow.setContent("<i>"+strDescription+" </i>");
+	        infowindow.open(map, marker);
+	    });
+	}
+
+	var i = 0;
+	function jsonManager(currentJson, contentType){
+
+
+		$.each(currentJson.features, function (key, data) {
+
+  		var latLng = new google.maps.LatLng(data.geometry.coordinates[1], data.geometry.coordinates[0]);
+  		var desc = isEmpty(data.properties.NOMBRE);
+
+  		markers[i] = new google.maps.Marker({
+  			id: data.properties.ID,
+            position: latLng,
+            map: null,
+            icon: policeIcon,
+            title: "Policia",
+            animation: google.maps.Animation.DROP
+        });
+
+
+        if (contentType == 1) {
+        	markers[i].setIcon(fountainIcon);
+        	markers[i].setTitle("Fuente");
+        } else if (contentType == 2){
+        	markers[i].setIcon(bomberosIcon);
+        	markers[i].setTitle("Bomberos");
+        } else if (contentType == 3){
+        	markers[i].setIcon(baresIcon);
+        	markers[i].setTitle("Bar");
+        }
+
+
+
+
+  		var details = desc;
+  		bindInfoWindow(markers[i], map, infoWindow, details);
+  		i++;
+  	  });
+
+	}
+
+
+
+  $.getJSON('geojsons/policia.json', function(jsonPolice) {
+  	jsonManager(jsonPolice, 0);
+ });
+
+
+  $.getJSON('geojsons/fuentes.json', function(jsonFountain) {
+  	jsonManager(jsonFountain, 1);
+ });
+
+   $.getJSON('geojsons/bomberos.json', function(jsonBomberos) {
+  	jsonManager(jsonBomberos, 2);
+ });
+
+  $.getJSON('geojsons/nightclubs.json', function(jsonNightClubs) {
+  	jsonManager(jsonNightClubs, 3);
+ });
+
+
+
+map.addListener('click', function() {
+	for( var i in markers ){
+		markers[i].setAnimation(null);
+	}
+});
+
+ function visualizarPolicia() {
+ 		for( var i in markers ){
+ 			if(markers[i].title=="Policia"){
+ 				if(markers[i].map == null){
+ 					markers[i].setMap(map);
+ 				}else{
+ 					markers[i].setMap(null);
+ 				}
+ 			}
+ 		}
+ }
+
+  function visualizarFuentes() {
+
+ 		for( var i in markers ){
+ 			if(markers[i].title=="Fuente"){
+ 				if(markers[i].map == null){
+ 					markers[i].setMap(map);
+ 				}else{
+ 					markers[i].setMap(null);
+ 				}
+ 			}
+ 		}
+ }
+
+function visualizarBomberos() {
+ 		for( var i in markers ){
+ 			if(markers[i].title=="Bomberos"){
+ 				if(markers[i].map == null){
+ 					markers[i].setMap(map);
+ 				}else{
+ 					markers[i].setMap(null);
+ 				}
+ 			}
+ 		}
+ }
+
+  function visualizarBares() {
+ 		for( var i in markers ){
+ 			if(markers[i].title=="Bar"){
+ 				if(markers[i].map == null){
+ 					markers[i].setMap(map);
+ 				}else{
+ 					markers[i].setMap(null);
+ 				}
+ 			}
+ 		}
+ }
+
+             
+	</script>
+	</body>
+
+</html>

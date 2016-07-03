@@ -1,0 +1,171 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?&libraries=places"></script>
+	<style type="text/css">
+	  html, body {
+		height: 100%;
+		width: 100%;
+		margin: 0;
+		padding: 0;
+	  }
+	  #map {
+		width: 100%;
+		height: 100%;
+	  }
+
+	  #botones{
+	  	background-color: 'yellow'
+	  }
+
+	  #lugar {
+		  background-color: #fff;
+		  font-family: Roboto;
+		  font-size: 15px;
+		  font-weight: 300;
+		  margin-left: 12px;
+		  padding: 0 11px 0 13px;
+		  text-overflow: ellipsis;
+		  width: 300px;
+		}
+
+		#lugar:focus {
+		  border-color: #4d90fe;
+		}
+
+		#type-selector {
+		  color: #fff;
+		  background-color: #4d90fe;
+		  padding: 5px 11px 0px 11px;
+		}
+
+		#type-selector label {
+		  font-family: Roboto;
+		  font-size: 13px;
+		  font-weight: 300;
+		}
+
+		.controls {
+		  margin-top: 10px;
+		  border: 1px solid transparent;
+		  border-radius: 2px 0 0 2px;
+		  box-sizing: border-box;
+		  -moz-box-sizing: border-box;
+		  height: 32px;
+		  outline: none;
+		  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+		}
+
+	</style>
+  </head>
+  <body>
+
+	<div id="botones">
+		  <div id="type-selector" class="controls">
+		      <input type="radio" name="type" id="changetype-all" checked="checked">
+		      <label for="changetype-all">Todos</label>
+
+		      <input type="radio" name="type" id="changetype-establishment">
+		      <label for="changetype-establishment">Establecimientos</label>
+
+		      <input type="radio" name="type" id="changetype-address">
+		      <label for="changetype-address">Direcciones</label>
+
+		      <input type="radio" name="type" id="changetype-geocode">
+		      <label for="changetype-geocode">Geocodes</label>
+    	  </div>
+    	  <input id="lugar" type="text" class="controls" placeHolder="Introduce un lugar">
+    </div>
+    	<div id="map"></div>
+
+	<script type="text/javascript">
+		  
+	var infowindow = new google.maps.InfoWindow({});
+
+	var mapOptions = {
+			center: new google.maps.LatLng(43.3570049,-8.4072441),
+			zoom: 10,
+			mapTypeId: google.maps.MapTypeId.SATELLITE,
+			mapTypeControlOptions: {mapTypeIds: []}
+	};
+
+	var mapElement = document.getElementById("map");
+	map = new google.maps.Map(mapElement, mapOptions);
+
+	  var marker = new google.maps.Marker({
+    map: map,
+    anchorPoint: new google.maps.Point(0, -29)
+  });
+
+    var botones = document.getElementById('botones');
+    map.controls[google.maps.ControlPosition.TOP_CENTER].push(botones);
+
+    var inputElem = document.getElementById("lugar");
+	var autocomplete = new google.maps.places.Autocomplete(inputElem);
+	autocomplete.bindTo('bounds', map);
+
+	autocomplete.addListener('place_changed', function() {
+	    infowindow.close();
+	    marker.setVisible(false);
+	    var place = autocomplete.getPlace();
+	    if (!place.geometry) {
+	      window.alert("Autocomplete's returned place contains no geometry");
+	      return;
+	    }
+
+
+	    if (place.geometry.viewport) {
+	      map.fitBounds(place.geometry.viewport);
+	    } else {
+	      map.setCenter(place.geometry.location);
+	      map.setZoom(17); 
+	    }
+
+	    marker.setIcon(({
+	      url: place.icon,
+	      size: new google.maps.Size(71, 71),
+	      origin: new google.maps.Point(0, 0),
+	      anchor: new google.maps.Point(17, 34),
+	      scaledSize: new google.maps.Size(35, 35)
+	    }));
+
+	    marker.setPosition(place.geometry.location);
+	    marker.setVisible(true);
+
+	    var address = '';
+	    if (place.address_components) {
+	      address = [
+	        (place.address_components[0] && place.address_components[0].short_name || ''),
+	        (place.address_components[1] && place.address_components[1].short_name || ''),
+	        (place.address_components[2] && place.address_components[2].short_name || '')
+	      ].join(' ');
+	    }
+
+    		  if (place.photos) {
+    			infowindow.setContent('<b>' + place.name + '</b>' + 
+                    '</br></br><img src=' + place.photos[0].getUrl({'maxWidth': 100, 'maxHeight': 100}) + '></img>');
+    			infowindow.setOptions({maxWidth: 100});
+    			infowindow.open(map, this);
+    		  } else {
+    			infowindow.setContent('<b>Nombre: </b> ' + place.name);
+    			infowindow.open(map, this);
+    		  }
+	    infowindow.open(map, marker);
+  });
+
+
+	  function setupClickListener(id, types) {
+	    var radioButton = document.getElementById(id);
+	    radioButton.addEventListener('click', function() {
+	      autocomplete.setTypes(types);
+	    });
+	  }
+
+	  setupClickListener('changetype-all', []);
+	  setupClickListener('changetype-address', ['address']);
+	  setupClickListener('changetype-establishment', ['establishment']);
+	  setupClickListener('changetype-geocode', ['geocode']);
+
+	</script>
+  </body>
+</html>

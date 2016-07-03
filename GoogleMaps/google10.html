@@ -1,0 +1,110 @@
+﻿<!DOCTYPE html>
+<html>
+  <head>
+    <script src="http://maps.googleapis.com/maps/api/js"></script>
+
+    <style>
+      html, body {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+      }
+
+    .checkbox {
+        background: white;
+        font-family: verdana;
+        font-size: 12px;
+        padding: 6px 8px;
+        margin-top: 10px;
+       }
+      
+      #map {
+      width: 100%;
+      height: 100%;
+      }
+
+    </style>
+    <title>Google Maps: selección de capas base</title>
+  </head>
+  <body>
+  <div id="map"></div>
+
+  <script>
+    var map;
+    
+    var mapOptions = {
+      center: new google.maps.LatLng(41.3429536,-3.8050057),
+      zoom: 6,
+      // Control de seleccion de basemaps
+      mapTypeControlOptions: {mapTypeIds: [google.maps.MapTypeId.ROADMAP,google.maps.MapTypeId.HYBRID]},
+    };
+    
+    var mapElement = document.getElementById("map");
+    map = new google.maps.Map(mapElement, mapOptions);
+        
+    // Creación de un popup
+    var infoWindow = new google.maps.InfoWindow();
+    
+
+    function isEmpty(val) {
+        if (val) {
+          return val;
+        } else {
+          return "Punto de interés";
+        }
+    }
+
+    function info(e) {
+        var feature = e.feature;
+        infoWindow.setContent( feature.getProperty('NOMBRE') );
+        infoWindow.setPosition(e.latLng);
+        infoWindow.setOptions({pixelOffset: new google.maps.Size(0, -10)});
+        infoWindow.open(map);
+    }
+
+
+
+
+
+    function modificarEstilos(feature) {
+      var currentColor;
+      var nombreDim = feature.getProperty('NOMBRE').length;
+      if(nombreDim>20){
+        currentColor= '#ff0000'
+      }else if (nombreDim>15){
+        currentColor= '#ff4000'
+      } else if (nombreDim>10){
+        currentColor = '#ff8000'
+      } else if (nombreDim>5){
+        currentColor = '#ffff00'
+      }
+
+
+
+      var polygonOptions = {
+            strokeColor: '#FF0000',
+            strokeOpacity: 0.9,
+            strokeWeight: 2,
+            fillColor: currentColor,
+            fillOpacity: 1,
+            map: map
+      };
+
+      return polygonOptions;     
+      }
+
+
+    map.data.loadGeoJson('geojsons/comunidades.json');
+    map.data.setStyle(modificarEstilos);
+    map.data.addListener('click', info);
+
+    map.data.addListener('mouseover', function(event) {
+        map.data.revertStyle();
+        map.data.overrideStyle(event.feature, {fillColor: 'green',strokeColor:'white', strokeWeight:4});
+  });
+
+  </script>
+  </body>
+
+</html>

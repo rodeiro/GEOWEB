@@ -1,0 +1,32 @@
+{
+"type": "FeatureCollection",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+                                                                                
+"features": [
+{ "type": "Feature", "properties": { "ID": 283396102.000000, "NOMBRE": null }, "geometry": { "type": "Point", "coordinates": [ -8.169563, 43.4075094 ] } },
+{ "type": "Feature", "properties": { "ID": 390338840.000000, "NOMBRE": null }, "geometry": { "type": "Point", "coordinates": [ -8.413639, 43.3680303 ] } },
+{ "type": "Feature", "properties": { "ID": 1450614009.000000, "NOMBRE": "Estanque" }, "geometry": { "type": "Point", "coordinates": [ -8.413272, 43.3617626 ] } },
+{ "type": "Feature", "properties": { "ID": 1450614015.000000, "NOMBRE": "Esfera de piedra" }, "geometry": { "type": "Point", "coordinates": [ -8.4139343, 43.3617937 ] } },
+{ "type": "Feature", "properties": { "ID": 1455826011.000000, "NOMBRE": "Porlier" }, "geometry": { "type": "Point", "coordinates": [ -8.3967861, 43.3733666 ] } },
+{ "type": "Feature", "properties": { "ID": 1659212839.000000, "NOMBRE": null }, "geometry": { "type": "Point", "coordinates": [ -8.403685, 43.3668665 ] } },
+{ "type": "Feature", "properties": { "ID": 1706522968.000000, "NOMBRE": null }, "geometry": { "type": "Point", "coordinates": [ -8.4094896, 43.3534054 ] } },
+{ "type": "Feature", "properties": { "ID": 1706522969.000000, "NOMBRE": null }, "geometry": { "type": "Point", "coordinates": [ -8.4103134, 43.3484494 ] } },
+{ "type": "Feature", "properties": { "ID": 1709157977.000000, "NOMBRE": null }, "geometry": { "type": "Point", "coordinates": [ -8.4062674, 43.3522362 ] } },
+{ "type": "Feature", "properties": { "ID": 1713448264.000000, "NOMBRE": null }, "geometry": { "type": "Point", "coordinates": [ -8.4047216, 43.3544795 ] } },
+{ "type": "Feature", "properties": { "ID": 1813139719.000000, "NOMBRE": null }, "geometry": { "type": "Point", "coordinates": [ -8.4023726, 43.3505649 ] } },
+{ "type": "Feature", "properties": { "ID": 1813979222.000000, "NOMBRE": "Fuente del Canton" }, "geometry": { "type": "Point", "coordinates": [ -8.2320848, 43.4826235 ] } },
+{ "type": "Feature", "properties": { "ID": 1848496870.000000, "NOMBRE": "Fuente de los surfistas" }, "geometry": { "type": "Point", "coordinates": [ -8.4034702, 43.3749573 ] } },
+{ "type": "Feature", "properties": { "ID": 1928827011.000000, "NOMBRE": null }, "geometry": { "type": "Point", "coordinates": [ -8.2105714, 43.2796898 ] } },
+{ "type": "Feature", "properties": { "ID": 2043880745.000000, "NOMBRE": null }, "geometry": { "type": "Point", "coordinates": [ -8.5054394, 43.3048519 ] } },
+{ "type": "Feature", "properties": { "ID": 2570156059.000000, "NOMBRE": "Fonte da Praza de Portugal" }, "geometry": { "type": "Point", "coordinates": [ -8.4139046, 43.3680887 ] } },
+{ "type": "Feature", "properties": { "ID": 2650228279.000000, "NOMBRE": null }, "geometry": { "type": "Point", "coordinates": [ -8.015746, 43.2340485 ] } },
+{ "type": "Feature", "properties": { "ID": 2693519009.000000, "NOMBRE": null }, "geometry": { "type": "Point", "coordinates": [ -8.4016748, 43.352907 ] } },
+{ "type": "Feature", "properties": { "ID": 2693519014.000000, "NOMBRE": null }, "geometry": { "type": "Point", "coordinates": [ -8.3939011, 43.3517163 ] } },
+{ "type": "Feature", "properties": { "ID": 2693519020.000000, "NOMBRE": null }, "geometry": { "type": "Point", "coordinates": [ -8.3975913, 43.3480994 ] } },
+{ "type": "Feature", "properties": { "ID": 3016149550.000000, "NOMBRE": null }, "geometry": { "type": "Point", "coordinates": [ -8.4014646, 43.3723793 ] } },
+{ "type": "Feature", "properties": { "ID": 3016149551.000000, "NOMBRE": null }, "geometry": { "type": "Point", "coordinates": [ -8.3982003, 43.3743251 ] } },
+{ "type": "Feature", "properties": { "ID": 3421978438.000000, "NOMBRE": null }, "geometry": { "type": "Point", "coordinates": [ -8.2010031, 43.334368 ] } },
+{ "type": "Feature", "properties": { "ID": 3465328590.000000, "NOMBRE": null }, "geometry": { "type": "Point", "coordinates": [ -8.3827956, 43.327359 ] } },
+{ "type": "Feature", "properties": { "ID": 3871686931.000000, "NOMBRE": "Fonte de San Andrés" }, "geometry": { "type": "Point", "coordinates": [ -8.4019226, 43.3701373 ] } }
+]
+}
