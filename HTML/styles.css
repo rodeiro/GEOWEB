@@ -1,0 +1,144 @@
+body {
+	margin: 0 0 1em 0;
+	padding: 0;
+	color: black;
+	background-color: #eee;
+	line-height: 130%;
+	font-family: arial, helvetica, verdana, tahoma, sans-serif;
+	text-align: justify;
+}
+
+a.boton {
+	text-decoration: none;
+	background: #69F;
+	color: #FFF;
+	border: 1px outset #CCC;
+	padding: .1em .5em;
+	font-weight:bold;
+}
+a.boton:hover {
+	background: #99ccff;
+}
+a.boton:active {
+	border: 1px inset #000;
+}
+
+/* Enlaces que no sean correo */
+.geoEnlace:hover { 
+    background-color: yellow;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table, th, td {
+    border: 1px solid black;
+}
+
+#wrapper-header {
+	background: white;
+	width: 100%
+}
+
+#header {
+	background: white url('images/LogoWebes_ES.png') left no-repeat; 
+	width: 85%;
+	height: 150px;
+	margin: 0 auto;
+	text-align: left;
+}
+
+#wrapper-menu {
+	background: #88ac0b url('images/menu-background.png') repeat-x;
+	float: left;
+	width: 100%;
+}
+
+#menu {
+	width: 85%;
+	margin: 0 auto; 
+	font-size: 95%;
+} 
+
+#menu ul {
+	margin: 0;
+	padding: 0; 
+	list-style: none; 
+}
+
+#menu li {
+	display: inline;
+}
+
+#menu a {
+	padding: 0.5em 1em;
+	background: transparent;
+	color: #FFF;
+	text-decoration: none;
+	border-right: 1px solid #95bc0e;
+	float: left; 
+}
+
+#menu a#seleccionado {
+	background: white;
+	color: #485B06;
+	font-weight: bold;
+}
+
+#menu a:hover {
+	background: #b6e41c url('images/menu-hover.png') repeat-x;
+	color: #485B06;
+}
+#content {
+	width: 83%;
+	margin: 0 auto;
+	padding: 3.5em 1% 20px 1%; 
+	border-left: 1px solid #bbb;
+	border-right: 1px solid #bbb;
+	border-bottom: 1px solid #bbb;
+	background: white;
+	font-size: 90%;
+	text-align: justify;
+}
+
+h2 {
+	color: #666;
+	padding-bottom: 3px;
+	border-bottom: 1px solid #a0c80e;
+	font-size: 150%;
+}
+
+h3 {
+	padding: 25px 0 5px 0;
+}
+
+.inputText:hover{
+	background: #b6e41c;
+	outline:solid 1px silver;
+}
+
+.inputText:focus{
+	background: #b6e41c;
+	outline:solid 1px blue;
+}
+
+.imaboxandyouarenot:hover{
+	background: #99ff33;
+}
+
+.respuestaCorrecta{
+	color:#b6e41c;
+	font-weight: bold;
+}
+
+.respuestaIncorrecta{
+	color:#ff0000;
+	font-weight: bold;
+}
+
+
+/* ****************************************************************** */
+
+
+

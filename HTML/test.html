@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html>
+
+<head>    
+	<title>Máster en Geoinformática</title>
+	<meta charset="ISO-8859-1"/>
+	<link rel="stylesheet" type="text/css" href="styles.css" />
+</head>
+    
+<body>    
+
+<!-- CABECERA y BARRA DE MENÚS -->
+<div id="wrapper-header">
+	<div id="header">
+	</div>     
+</div> 
+
+<div id="wrapper-menu">
+	<div id="menu">
+		<ul>
+			<li><a title="Inicio" href="index.html">Inicio</a></li>
+			<li><a id="seleccionado" title="Test" href="test.html">Test</a></li>
+			<li><a title="Practica1" href="practica1.html">Práctica 1</a></li>
+			<li><a title="Práctica2" href="practica2.html">Práctica 2</a></li>
+		</ul>
+	</div>
+</div>
+
+<!-- CONTENIDO -->
+<div id="content">
+	<!-- BOTON INICIO -->
+	<a class="boton" href="index.html" title='Volver al inicio'>
+		<img border="0" alt="HomeIcon" src="images/icon_home.png" width="25" height="25">
+		INICIO
+	</a>
+	
+	<form id="test" action="URL/servidor" method="post">
+		<br><br>
+	<fieldset class="imaboxandyouarenot">
+    <legend> <b>Datos personales</b></legend>
+    0.1 Nombre* <br> 
+    <input  class="inputText" type="text" id = "fname" name="fname"><br>
+
+    0.2 Primer apellido* <br> 
+    <input  class="inputText" type="text" id= "fsurename" name="fsurename"> <br>
+
+    0.3 Segundo apellido* <br>
+    <input class="inputText" type="text" id="ssurename" name="ssurename"> <br>
+
+
+    0.4 Correo electrónico <br>
+    <input class="inputText" id="mail" type="text" name="mail"> <br>
+
+    0.5 DNI <br>
+    <input class="inputText" id= "dni" type="text" name="dni"> <br>
+
+    0.6 Fecha de nacimiento (dd/mm/aaaa) <br>
+    <input class="inputText" id="date" type="text" name="dni"> <br>
+
+
+    </fieldset> <br>
+  <fieldset class="imaboxandyouarenot">
+    <legend><b>HTML Y CSS</b></legend>
+    1. ¿Qué letra permite marcar en negrita un texto en HTML? <br>
+   <input class="inputText" type="text" id= "pregunta1" name="answer1"><br><div id="bien1" class="respuestaCorrecta" style="display:none"> Respuesta correcta</div><div id="mal1" class="respuestaIncorrecta" style="display:none"> Respuesta Incorrecta</div><br>
+   
+   2. ¿Cuál de los siguientes términos permite modificar el comportamiento de un elmento al pasar el ratón sobre este?   <br>
+  <input type="radio" name="term2" value="hover"> Hover<br>
+  <input type="radio" name="term2" value="class"> Class<br>
+  <input type="radio" name="term2" value="geo"> Geo <br>
+  <input type="radio" name="term2" value="Click"> Click <br><div id="bien2" class="respuestaCorrecta" style="display:none"> Respuesta correcta</div><div id="mal2" class="respuestaIncorrecta" style="display:none"> Respuesta Incorrecta</div><br>
+
+  3. ¿Qué etiqueta HTML se emplea para crear filas en las tablas? <br>
+  <select id="pregunta3">
+	  <option value="td">TD</option>
+	  <option value="tr">TR</option>
+	  <option value="table">TABLE</option>
+	  <option value="door">DOOR</option>
+</select><br><div id="bien3" class="respuestaCorrecta" style="display:none"> Respuesta correcta</div><div id="mal3" class="respuestaIncorrecta" style="display:none"> Respuesta Incorrecta</div><br>
+
+  4. ¿Qué es necesario utilizar para completar la práctica 1?<br>
+  <input type="checkbox" name="test1" value="css"> CSS<br>
+  <input type="checkbox" name="test1" value="javascript" checked> JavaScript<br>
+   <input type="checkbox" name="test1" value="html"> HTML<br><div id="bien4" class="respuestaCorrecta" style="display:none"> Respuesta correcta</div><div id="mal4" class="respuestaIncorrecta" style="display:none"> Respuesta Incorrecta</div><br>
+
+    5. En CSS, ¿con qué propiedad se puede definir el espacio entre el contenido y el borde de un elemento?<br>
+	  <select id="pregunta5">
+		  <option value="padding">Padding</option>
+		  <option value="list">List-Style</option>
+		  <option value="background">Background</option>
+		  <option value="display">Display</option>
+	</select><br><div id="bien5" class="respuestaCorrecta" style="display:none"> Respuesta correcta</div><div id="mal5" class="respuestaIncorrecta" style="display:none"> Respuesta Incorrecta</div><br>
+
+	6. En CSS, ¿qué propiedad controla cuando se muestra y se deja de mostrar un elemento?<br>
+	<select id="pregunta6">
+		  <option value="padding">Padding</option>
+		  <option value="list">List-Style</option>
+		  <option value="background">Background</option>
+		  <option value="display">Display</option>
+	</select><br><div id="bien6" class="respuestaCorrecta" style="display:none"> Respuesta correcta</div><div id="mal6" class="respuestaIncorrecta" style="display:none"> Respuesta Incorrecta</div><br>
+
+ </fieldset>
+	<br>
+    <fieldset class="imaboxandyouarenot">
+    <legend><b>JavaScript</b></legend>
+    7. ¿A qué lenguaje de programación es similar JavaScript? <br>  
+  <input type="radio" name="language" value="C"> C<br>
+  <input type="radio" name="language" value="java"> Java<br>
+  <input type="radio" name="language" value="php"> PHP <br>
+    <input type="radio" name="language" value="none"> Ninguna de las anteriores <br><div id="bien7" class="respuestaCorrecta" style="display:none"> Respuesta correcta</div><div id="mal7" class="respuestaIncorrecta" style="display:none"> Respuesta Incorrecta</div><br>
+
+    8. ¿Es posible modificar el DOM (Document Object Model) desde JavaScript?  <br> 
+  <input type="radio" name="term" value="yes"> Sí<br>
+  <input type="radio" name="term" value="no"> No<br><div id="bien8" class="respuestaCorrecta" style="display:none"> Respuesta correcta</div><div id="mal8" class="respuestaIncorrecta" style="display:none"> Respuesta Incorrecta</div><br>
+
+  	9. En JavaScript, la expresión 'nodoPadre.removeChild(nodoHijo)' se utiliza para:<br>
+  	<select id="pregunta9">
+		  <option value="add">Añadir un nodo como hijo de otro</option>
+		  <option value="remove">Eliminar el nodo hijo indicado</option>
+		  <option value="replace">Reemplazar el nodo hijo indicado</option>
+		  <option value="hide">Ocultar temporalmente el nodo hijo indicado</option>
+	</select><br><div id="bien9" class="respuestaCorrecta" style="display:none"> Respuesta correcta</div><div id="mal9" class="respuestaIncorrecta" style="display:none"> Respuesta Incorrecta</div><br>
+
+	10. El atributo 'onkeypress' captura el evento: <br>
+	  	<select id="pregunta10">
+		  <option value="window">Abrir una venta</option>
+		  <option value="focus">Seleccionar un elemento</option>
+		  <option value="form">Borrar un formulario</option>
+		  <option value="keypress">Pulsar una tecla</option>
+	</select><br><div id="bien10" class="respuestaCorrecta" style="display:none"> Respuesta correcta</div><div id="mal10" class="respuestaIncorrecta" style="display:none"> Respuesta Incorrecta</div><br>
+
+    </fieldset>
+	<BR><BR>
+    	<!-- BOTON evaluar -->
+	<a class="boton" id="evaluar" href="#" title='Evaluar cuestionario'>
+		<img border="0" alt="evalIcon" src="images/icon_eval.png" width="25" height="25">
+		Evaluar cuestionario
+	</a>
+
+		<!-- Botón de reseteo de campos del formulario (permanece oculto) "-->
+		<BR><BR><input type="reset" id="reset" name="limpiar" value="Borrar" style="display:none" />
+	</form>
+</div>
+
+<script text="text/javascript">
+	
+    function validarRadio(elemento) {
+        var marcada = -1;
+         	for (var i = 0; i < elemento.length; i++) {
+                if (elemento[i].checked) {
+                    marcada = i;
+                    break; 
+                }
+            }
+        return marcada;
+    } 
+
+	function evalua1(){
+		var respuesta = document.getElementById("pregunta1").value;
+		if (respuesta == "b"){
+			document.getElementById("bien1").style.display = "block";
+			return 1;
+		}else{
+			document.getElementById("mal1").style.display = "block";
+			return 0;
+		}
+	}
+
+	function evalua2(){
+		var elementos = document.getElementsByName('term2');
+
+		var respuesta = validarRadio(elmentos);
+		if(respuesta == 0){
+			document.getElementById("bien2").style.display = "block";
+		}else{
+			document.getElementById("mal2").style.display = "block";
+		}
+	}
+
+
+	function evalua3(){
+		var elemento = document.getElementById("pregunta3");
+		var marcada = elemento.options[elemento.selectedIndex].value;
+		if (marcada == "tr") {
+			document.getElementById("bien3").style.display = "block";
+			return 1; 
+		}else{
+			document.getElementById("mal3").style.display = "block";
+			return 0;
+		}
+	}
+
+	function evalua5(){
+		var elemento = document.getElementById("pregunta5");
+		var marcada = elemento.options[elemento.selectedIndex].value;
+		if (marcada == "padding") {
+			document.getElementById("bien5").style.display = "block";
+			return 1; 
+		}else{
+			document.getElementById("mal5").style.display = "block";
+			return 0;
+		}
+	}
+
+	function evalua6(){
+		var elemento = document.getElementById("pregunta6");
+		var marcada = elemento.options[elemento.selectedIndex].value;
+		if (marcada == "display") {
+			document.getElementById("bien6").style.display = "block";
+			return 1; 
+		}else{
+			document.getElementById("mal6").style.display = "block";
+			return 0;
+		}
+	}
+
+	function evalua9(){
+		var elemento = document.getElementById("pregunta9");
+		var marcada = elemento.options[elemento.selectedIndex].value;
+		if (marcada == "remove") {
+			document.getElementById("bien9").style.display = "block";
+			return 1; 
+		}else{
+			document.getElementById("mal9").style.display = "block";
+			return 0;
+		}
+	}
+
+	function evalua10(){
+		var elemento = document.getElementById("pregunta10");
+		var marcada = elemento.options[elemento.selectedIndex].value;
+		if (marcada == "keypress") {
+			document.getElementById("bien10").style.display = "block";
+			/*var mensaje = document.createElement('p');
+			var texto = document.createTextNode('Respuesta correcta');
+			mensaje.appendChild(texto);
+			var nodoPadre = document.getElementById("bien10");
+			nodoPadre.appendChild(mensaje);*/
+			return 1; 
+		}else{
+			document.getElementById("mal10").style.display = "block";
+			//document.getElementById("mal10").style.visibility='hidden';
+
+			return 0;
+		}
+	}
+
+	function validar() {
+		var correctas = 0;
+		var pregunta1 = evalua1();
+		var pregunta2 = evalua2();
+		var pregunta3 = evalua3();
+		var pregunta5 = evalua5();
+		var pregunta6 = evalua6();
+		var pregunta9 = evalua9();
+		var pregunta10 = evalua10();
+		correctas = pregunta1 + pregunta3 + pregunta5 + pregunta6 + pregunta9 + pregunta10;
+		/* Realizar la comprobación de la respuesta a cada pregunta*/
+		/* Ejemplo */
+		// correctas += validarP1(document.getElementById("XXX"));
+		// correctas += validarP2(document.getElementsByClassName("YYY")); 
+
+		/* Mostrar el número de respuestas acertadas en el elemento HTML creado para ello */
+		
+		return correctas;
+	}
+	
+	function isValidDNI(code){
+		if((/^\d{8}[a-zA-Z]$/.test(code.value))|| (code.value== null || code.value=="" || code.value==undefined)){
+			code.className= "respuestaCorrecta";
+			return 0;
+		}else{
+			code.value = "DNI INCORRECTO";
+			code.className = "respuestaIncorrecta";
+			return 1;
+		}
+	}
+
+	function isValidEmail(uncoolMail)
+	{
+		if((/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/.test(uncoolMail.value))|| (uncoolMail.value== null || uncoolMail.value=="" || uncoolMail.value==undefined)){
+			uncoolMail.className= "respuestaCorrecta";
+			return 0;
+		}else{
+			uncoolMail.value = "CORREO INCORRECTO";
+			uncoolMail.className = "respuestaIncorrecta";
+			return 1;
+		}
+	}
+
+	function isTimeAnIllusion(date){
+		if ((/^([0-9]{2})\/([0-9]{2})\/([0-9]{4})$/.test(date.value) )|| (date.value== null || date.value=="" || date.value==undefined)){
+			date.className = "respuestaCorrecta";
+			return 0;
+		}else{
+			date.value = "FECHA INCORRECTA";
+			date.className = "respuestaIncorrecta";	
+			return 1;
+		};
+	}
+
+	function isValidName(uglyName)
+	{
+		if(/^([A-ZÁÉÍÓÚ]{1}[a-zñáéíóú]+[\s]*)+$/.test(uglyName.value)){
+			uglyName.className = "respuestaCorrecta";
+			return 0;
+		}else{
+			if(uglyName.value== null || uglyName.value=="" || uglyName.value==undefined){
+				uglyName.value = "Debe rellenar este campo";
+				uglyName.className = "respuestaIncorrecta";	
+			} else{
+				uglyName.value = "CAMPO INCORRECTO";
+				uglyName.className = "respuestaIncorrecta";	
+			}
+			return 1;
+		} 
+	}
+
+
+	function hayErrorEnDatos() {
+		return false;
+		var apellido1 = document.getElementById("fsurename");
+		var errorApellido1 = isValidName(apellido1);
+		var apellido2 = document.getElementById("ssurename");
+		var errorApellido2 = isValidName(apellido2);
+		var nombre = document.getElementById("fname");
+		var errorNombre = isValidName(nombre);
+
+		var fecha = document.getElementById("date");
+		var errorFecha = isTimeAnIllusion(fecha);
+
+		var correo = document.getElementById("mail");
+		var errorCorreo = isValidEmail(correo);
+
+		var dni = document.getElementById("dni");
+		var errorDNI = isValidDNI(dni);
+
+		return errorNombre+errorApellido1+errorApellido1 +errorFecha + errorCorreo + errorDNI>0;
+	
+	}
+	
+	/* Número total de preguntas que componen tu test */
+	var preguntas = 10;
+	
+	/* Acción asociada al botón de evaluación del cuestionario */
+	document.getElementById("evaluar").addEventListener("click", function() 
+	{if (hayErrorEnDatos()) {
+		alert('Debe rellenar correctamente sus datos personales para poder iniciar la evaluación del cuestionario');
+	  } else {
+
+		var correctas = validar();
+		if (correctas == preguntas) {
+			//alert(/* Completar */);
+		} else {
+			alert("Has acertado "+correctas+" preguntas, PRINGADO");
+		}
+	  }
+	});
+	
+	/* Limpieza de campos que forman el cuestionario */
+	function limpiar () {
+		document.getElementById("reset").click();
+	}
+	window.onload = limpiar();
+
+	/*
+
+	2.  Observaciones a la Práctica 2 ...
+     
+Para comprobar la respuesta a una pregunta que ha sido configurada como un radiobutton, fijaos que sólo una de las opciones del radiobutton será correcta. Por tanto, para su validación podéis utilizar algo asi:
+             
+
+             NOTA: obviamente, elemento es la variable de JavaScript donde habéis almacenado el componente HTML que representa vuestro
+            radiobutton  --> var botonRadio = document.getElementsByName("XXXX");  donde XXX es el valor del atributo name que 
+            comparten todas las opciones de tu radiobutton*/
+	
+</script>
+</body>
+</html>
